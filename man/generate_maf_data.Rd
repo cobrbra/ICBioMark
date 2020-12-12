@@ -5,8 +5,8 @@
 \title{Generate mutation data.}
 \usage{
 generate_maf_data(
-  n_samples = 200,
-  n_genes = 500,
+  n_samples = 20,
+  n_genes = 50,
   mut_types = NULL,
   data_dist = NULL,
   sample_rates = NULL,

@@ -48,7 +48,7 @@
 #' # See the first rows of the gene_lengths table.
 #' print(head(data$gene_lengths))
 
-generate_maf_data <- function(n_samples = 200, n_genes = 500, mut_types = NULL, data_dist = NULL,
+generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, data_dist = NULL,
                               sample_rates = NULL, gene_rates = NULL, gene_lengths = NULL,
                               sample_rates_dist = NULL, gene_rates_dist = NULL, gene_lengths_dist = NULL,
                               bmr_genes_prop = 0.9, seed_id = 1234) {
