@@ -20,4 +20,10 @@ Suggests:
 Imports: 
     stats,
     utils,
-    glmnet
+    glmnet,
+    Matrix,
+    magrittr,
+    dplyr,
+    purrr
+Depends: 
+    R (>= 2.10)

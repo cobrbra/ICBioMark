@@ -2,10 +2,10 @@
 #'
 #' Randomly simulate an (abridged) annotated mutation file, containing information on sample of origin, gene and mutation type, as well as a dataframe of gene lengths.
 #'
-#' @param n_samples (integer)
+#' @param n_samples (numeric)
 #' The number of samples to generate mutation data for - each will have a unique value in the 'Tumor_Sample_Barcode'
 #' column of the simulated MAF table. Note that if no mutations are simulated for an example, they will not appear in the table.
-#' @param n_genes (integer)
+#' @param n_genes (numeric)
 #' The number of genes to generate mutation data for - each will have a unique value in the 'Hugo_Symbol' column
 #' of the simulated MAF table. A length will also be generated for each gene, and stored in the table 'gene_lengths'.
 #' @param mut_types (numeric)
@@ -29,7 +29,7 @@
 #' @param bmr_genes_prop (numeric)
 #' The proportion of genes that follow the background mutation rate. If specified (as is automatic), this proportion of genes
 #' will have gene-specific rates equal to 1. By setting to be NULL, can avoid applying this step.
-#' @param seed_id (integer)
+#' @param seed_id (numeric)
 #' Input value for the function set.seed().
 #'
 #' @return
@@ -55,8 +55,8 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
 
   set.seed(seed_id)
 
-  gene_ids <- paste0("GENE_", 1:n_genes)
-  sample_ids <- paste0("SAMPLE_", 1:n_samples)
+  gene_list <- paste0("GENE_", 1:n_genes)
+  sample_list <- paste0("SAMPLE_", 1:n_samples)
 
   if(is.null(mut_types)) {
     mut_types <- c(0.6, 0.2, 0.05, 0.02,  rep(0.01, 13))
@@ -78,7 +78,7 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
         return(stats::rpois(n = n, lambda = 1000))}
     }
     gene_lengths <- gene_lengths_dist(n = n_genes)
-    names(gene_lengths) <- gene_ids
+    names(gene_lengths) <- gene_list
   }
 
   message("Generating data")
@@ -92,7 +92,7 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
           }
         }
         sample_rates <- sample_rates_dist(n = n_samples)
-        names(sample_rates) <- sample_ids
+        names(sample_rates) <- sample_list
       }
 
       if (is.null(gene_rates)) {
@@ -102,11 +102,11 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
             return(stats::runif(n = n, min = 0.5, max = 1.5))}
         }
         gene_rates <- gene_rates_dist(n = n_genes)
-        names(gene_rates) <- gene_ids
+        names(gene_rates) <- gene_list
       }
 
       if (!is.null(bmr_genes_prop)) {
-        bmr_genes <- sample(gene_ids, size = floor(bmr_genes_prop*n_genes), replace = FALSE)
+        bmr_genes <- sample(gene_list, size = floor(bmr_genes_prop*n_genes), replace = FALSE)
         gene_rates[bmr_genes] <- 1
       }
 
@@ -133,14 +133,15 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
   pb <- utils::txtProgressBar(max = n_genes, width = 100, style = 3)
   for (gene in 1:n_genes) {
     utils::setTxtProgressBar(pb, gene)
+
     for (mut_type in 1:n_mut_types) {
       for (sample in 1:n_samples) {
         vector_position <- (gene - 1)*n_mut_types*n_samples + (mut_type - 1)*n_samples + sample
         mutation_count <- mutation_vector[vector_position]
 
         if (mutation_count > 0) {
-          maf[index:(index + mutation_count - 1), "Tumor_Sample_Barcode"] <- sample_ids[sample]
-          maf[index:(index + mutation_count - 1), "Hugo_Symbol"] <- gene_ids[gene]
+          maf[index:(index + mutation_count - 1), "Tumor_Sample_Barcode"] <- sample_list[sample]
+          maf[index:(index + mutation_count - 1), "Hugo_Symbol"] <- gene_list[gene]
           maf[index:(index + mutation_count - 1), "Variant_Classification"] <- names(mut_types)[mut_type]
           index <- index + mutation_count
         }
@@ -151,9 +152,7 @@ generate_maf_data <- function(n_samples = 20, n_genes = 50, mut_types = NULL, da
   maf <- maf[sample(1:sum(mutation_vector), sum(mutation_vector), replace = FALSE),]
 
   gene_length_data <- data.frame(Hugo_Symbol = names(gene_lengths), max_cds = gene_lengths)
-  output <- list(maf, gene_length_data)
-  names(output) <- c("maf", "gene_lengths")
 
-  return(output)
+  return(list(maf = maf, gene_lengths = gene_length_data))
 
 }
