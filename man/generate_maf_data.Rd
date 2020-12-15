@@ -20,11 +20,11 @@ generate_maf_data(
 )
 }
 \arguments{
-\item{n_samples}{(integer)
+\item{n_samples}{(numeric)
 The number of samples to generate mutation data for - each will have a unique value in the 'Tumor_Sample_Barcode'
 column of the simulated MAF table. Note that if no mutations are simulated for an example, they will not appear in the table.}
 
-\item{n_genes}{(integer)
+\item{n_genes}{(numeric)
 The number of genes to generate mutation data for - each will have a unique value in the 'Hugo_Symbol' column
 of the simulated MAF table. A length will also be generated for each gene, and stored in the table 'gene_lengths'.}
 
@@ -58,7 +58,7 @@ Directly provide the distribution of gene lengths, as a function of the number o
 The proportion of genes that follow the background mutation rate. If specified (as is automatic), this proportion of genes
 will have gene-specific rates equal to 1. By setting to be NULL, can avoid applying this step.}
 
-\item{seed_id}{(integer)
+\item{seed_id}{(numeric)
 Input value for the function set.seed().}
 }
 \value{

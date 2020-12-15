@@ -1,3 +1,14 @@
-test_that("Test that the output of a simple call to generate_maf_data() hasn't changed", {
-  #expect_equal_to_reference(generate_maf_data())
+context("Simulating maf data")
+
+test_that("Check that the output of generate_maf_data() has the right structure", {
+  output <- generate_maf_data()
+  expect_is(output, "list")
+  expect_equal(length(output), 2)
+  expect_equal(names(output), c("maf", "gene_lengths"))
 })
+
+test_that("Check that the output of generate_maf_data() has not changed", {
+  output <- generate_maf_data()
+  expect_equal(output, example_maf_data)
+})
+
