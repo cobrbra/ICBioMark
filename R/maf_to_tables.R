@@ -145,7 +145,7 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 #' * sample_list: A vector of characters specifying the samples included in the matrix: the rows of the mutation matrix correspond to each of these.
 #' * gene_list: A vector of characters specifying the the genes included in the matrix.
 #' * mut_types_list: A vector of characters specifying the mutation types (as grouped into an appropriate dictionary) to be included in the matrix.
-#' * colnames: A vector of characters identifying the columns of the mutation matrix. Each entry will be comprised of two parts separated by the character
+#' * col_names: A vector of characters identifying the columns of the mutation matrix. Each entry will be comprised of two parts separated by the character
 #'   '_', the first identifying the gene in question and the second identifying the mutation type. E.g. 'GENE1_NS" where 'GENE1' is an element of gene_list,
 #'   and 'NS' is an element of the dictionary vector.
 #'
@@ -158,7 +158,7 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 #'
 #' print(names(table))
 #' print(table$matrix[1:10,1:10])
-#' print(table$colnames[1:10])
+#' print(table$col_names[1:10])
 
 get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_biomarker = "TIB", include_synonymous = TRUE, dictionary = NULL) {
 
@@ -199,9 +199,9 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
                                           x = 1,
                                           dims = c(n_samples*n_genes*n_mut_types, 1))
   dim(mutation_matrix) <- c(n_samples, n_genes*n_mut_types)
-  colnames <- paste0(rep(gene_list, each = n_mut_types), "_", rep(unique(dictionary), times = n_genes))
+  col_names <- paste0(rep(gene_list, each = n_mut_types), "_", rep(unique(dictionary), times = n_genes))
 
-  return(list(matrix = mutation_matrix, sample_list = sample_list, gene_list = gene_list, mut_types_list = unique(dictionary), colnames = colnames))
+  return(list(matrix = mutation_matrix, sample_list = sample_list, gene_list = gene_list, mut_types_list = unique(dictionary), col_names = col_names))
 
 }
 
