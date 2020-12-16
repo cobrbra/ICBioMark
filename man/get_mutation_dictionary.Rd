@@ -49,7 +49,8 @@ names(dictionary) <- c('Missense_Mutation', 'Nonsense_Mutation',
 'Frame_Shift_Ins', 'Silent',
 'Splice_Region', '3\'Flank', '5\'Flank',
 'Intron', 'RNA', '3\'UTR', '5\'UTR')
-# where the grouping levels are chosen to be "NS" and "S" nonsynonymous and synonymous mutations respectively.
+# where the grouping levels are chosen to be "NS" and "S" for
+# nonsynonymous and synonymous mutations respectively.
 # the code
 dictionary <- get_mutation_dictionary(for_biomarker = "TIB", include_synonymous = FALSE)
 # is equivalent to
@@ -59,5 +60,6 @@ names(dictionary) <- c('Missense_Mutation', 'Nonsense_Mutation',
                       'Nonstop_Mutation', 'In_Frame_Ins',
                       'In_Frame_Del', 'Frame_Shift_Del',
                       'Frame_Shift_Ins')
-# where now "I" is used as a label to refer to indel mutations, and synonymous mutations are filtered out.
+# where now "I" is used as a label to refer to indel mutations,
+# and synonymous mutations are filtered out.
 }

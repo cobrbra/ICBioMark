@@ -49,7 +49,7 @@ This function allows for i) separation of a mutation dataset into training, vali
 to sparse mutation matrices, as described in the function get_table_from_maf().
 }
 \examples{
-tables <- get_tables(example_maf_data)
+tables <- get_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
 
 print(names(tables))
 print(names(tables$train))

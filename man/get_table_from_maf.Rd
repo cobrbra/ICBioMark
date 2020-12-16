@@ -52,7 +52,7 @@ will likely be very sparse, so we save it as a sparse matrix for efficiency..
 \examples{
 # We use the preloaded maf file example_maf_data
 # Now we make a mutation matrix
-table <- get_table_from_maf(example_maf_data$maf)
+table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
 
 print(names(table))
 print(table$matrix[1:10,1:10])
