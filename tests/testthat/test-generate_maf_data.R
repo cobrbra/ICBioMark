@@ -1,4 +1,4 @@
-context("Simulating maf data")
+context("Simulating MAF data")
 
 test_that("Check that the output of generate_maf_data() has the right structure", {
   output <- generate_maf_data()
