@@ -34,7 +34,8 @@
 #' 'Frame_Shift_Ins', 'Silent',
 #' 'Splice_Region', '3\'Flank', '5\'Flank',
 #' 'Intron', 'RNA', '3\'UTR', '5\'UTR')
-#' # where the grouping levels are chosen to be "NS" and "S" nonsynonymous and synonymous mutations respectively.
+#' # where the grouping levels are chosen to be "NS" and "S" for
+#' # nonsynonymous and synonymous mutations respectively.
 #' # the code
 #' dictionary <- get_mutation_dictionary(for_biomarker = "TIB", include_synonymous = FALSE)
 #' # is equivalent to
@@ -44,7 +45,8 @@
 #'                       'Nonstop_Mutation', 'In_Frame_Ins',
 #'                       'In_Frame_Del', 'Frame_Shift_Del',
 #'                       'Frame_Shift_Ins')
-#' # where now "I" is used as a label to refer to indel mutations, and synonymous mutations are filtered out.
+#' # where now "I" is used as a label to refer to indel mutations,
+#' # and synonymous mutations are filtered out.
 
 get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = TRUE, maf = NULL, dictionary = NULL) {
 
@@ -152,7 +154,7 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 #' @examples
 #' # We use the preloaded maf file example_maf_data
 #' # Now we make a mutation matrix
-#' table <- get_table_from_maf(example_maf_data$maf)
+#' table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
 #'
 #' print(names(table))
 #' print(table$matrix[1:10,1:10])
@@ -183,9 +185,9 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
   mut_type_ids <- 1:n_mut_types
   names(mut_type_ids) <- unique(dictionary)
 
-  abridged_maf <- filter(maf, Tumor_Sample_Barcode %in% sample_list,
-                              Hugo_Symbol %in% gene_list,
-                              Variant_Classification %in% names(dictionary))
+  abridged_maf <- dplyr::filter(maf, maf$Tumor_Sample_Barcode %in% sample_list,
+                              maf$Hugo_Symbol %in% gene_list,
+                              maf$Variant_Classification %in% names(dictionary))
 
   maf_ids <- data.frame(sample_id = sample_ids[abridged_maf$Tumor_Sample_Barcode],
                         gene_id = gene_ids[abridged_maf$Hugo_Symbol],
@@ -231,7 +233,7 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
 #' @export
 #'
 #' @examples
-#' tables <- get_tables(example_maf_data)
+#' tables <- get_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
 #'
 #' print(names(tables))
 #' print(names(tables$train))
@@ -246,7 +248,6 @@ get_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0.15), sam
   if (is.null(gene_list)) {
     gene_list <- unique(maf$Hugo_Symbol)
   }
-  print(length(sample_list))
   split <- split / sum(split)
   train_samples <- sample(sample_list, size = floor(split['train']*length(sample_list)), replace = FALSE)
   val_samples <- sample(setdiff(sample_list, train_samples), floor(split['val']*length(sample_list)), replace = FALSE)
@@ -259,5 +260,3 @@ get_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0.15), sam
   return(split_matrices)
 
 }
-
-
