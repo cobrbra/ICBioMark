@@ -16,7 +16,7 @@
 
 #' Mutation Matrices from Simulated Data
 #'
-#' Mutation data extracted from the stored example piecec of mutation data example_maf_data using get_tables.
+#' Mutation data extracted from the stored example pieces of mutation data example_maf_data using get_tables.
 #'
 #' @format A list with three entries:
 #' \describe{
@@ -33,3 +33,15 @@
 #'   \item{colnames}{A character vector of gene name/mutation type combinations (in each case separated by the character "_"), corresponding to the columns of the mutation matrix.}
 #' }
 "example_tables"
+
+#' Generative Model from Simulated Data
+#'
+#' Model fitted using fit_gen_model() on example simulated data.
+#'
+#' @format A list with two entries:
+#' \describe{
+#'   \item{fit}{A glmnet fit object.}
+#'   \item{dev}{A table containing the average deviance of each cross-validation fold, for each penalisation factor in fit$lambda.}
+#'   \item{s_min}{The index of the regularisation penalty minimising average deviance across folds.}
+#' }
+"example_gen_model"
