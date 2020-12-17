@@ -29,6 +29,8 @@
 #' @param bmr_genes_prop (numeric)
 #' The proportion of genes that follow the background mutation rate. If specified (as is automatic), this proportion of genes
 #' will have gene-specific rates equal to 1. By setting to be NULL, can avoid applying this step.
+#' @param output_rates (logical)
+#' If TRUE, will include the sample and gene rates in the output.
 #' @param seed_id (numeric)
 #' Input value for the function set.seed().
 #'
@@ -51,7 +53,7 @@
 generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, data_dist = NULL,
                               sample_rates = NULL, gene_rates = NULL, gene_lengths = NULL,
                               sample_rates_dist = NULL, gene_rates_dist = NULL, gene_lengths_dist = NULL,
-                              bmr_genes_prop = 0.9, seed_id = 1234) {
+                              bmr_genes_prop = 0.2, output_rates = FALSE, seed_id = 1234) {
 
   set.seed(seed_id)
 
@@ -83,7 +85,7 @@ generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, d
 
   message("Generating data")
   if (is.null(data_dist)) {
-    data_dist <- function(n_samples, n_genes, mut_types, gene_lengths) {
+    data_dist <- function(n_samples, n_genes, mut_types, gene_lengths, output_rates) {
 
       if (is.null(sample_rates)) {
         if(is.null(sample_rates_dist)) {
@@ -114,12 +116,17 @@ generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, d
                                 rep(mut_types, each = n_samples, times = n_genes) *
                                   rep(gene_rates * gene_lengths, each = n_samples * n_mut_types)
 
-      return(stats::rpois(n = n_samples * n_genes * length(mut_types), lambda = mutation_vector_means))
+      if (output_rates) {
+        return(list(vector = stats::rpois(n = n_samples * n_genes * length(mut_types), lambda = mutation_vector_means), sample_rates = sample_rates, gene_rates = gene_rates))
+      }
+      else{
+        return(list(vector = stats::rpois(n = n_samples * n_genes * length(mut_types), lambda = mutation_vector_means)))
+      }
     }
   }
 
-  mutation_vector <- data_dist(n_samples = n_samples, n_genes = n_genes, mut_types = mut_types, gene_lengths = gene_lengths)
-
+  mutation_data <- data_dist(n_samples = n_samples, n_genes = n_genes, mut_types = mut_types, gene_lengths = gene_lengths, output_rates = output_rates)
+  mutation_vector <- mutation_data$vector
 
   message("Assembling maf")
   maf <- data.frame(Tumor_Sample_Barcode = rep("", sum(mutation_vector)),
@@ -153,6 +160,10 @@ generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, d
 
   gene_length_data <- data.frame(Hugo_Symbol = names(gene_lengths), max_cds = gene_lengths)
 
-  return(list(maf = maf, gene_lengths = gene_length_data))
-
+  if (output_rates) {
+    return(list(maf = maf, gene_lengths = gene_length_data, rates = list(sample_rates = mutation_data$sample_rates, gene_rates = mutation_data$gene_rates, mut_types = mut_types)))
+  }
+  else {
+    return(list(maf = maf, gene_lengths = gene_length_data))
+  }
 }

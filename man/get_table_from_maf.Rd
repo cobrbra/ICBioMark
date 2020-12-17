@@ -39,7 +39,7 @@ A list with the following entries:
 \item sample_list: A vector of characters specifying the samples included in the matrix: the rows of the mutation matrix correspond to each of these.
 \item gene_list: A vector of characters specifying the the genes included in the matrix.
 \item mut_types_list: A vector of characters specifying the mutation types (as grouped into an appropriate dictionary) to be included in the matrix.
-\item colnames: A vector of characters identifying the columns of the mutation matrix. Each entry will be comprised of two parts separated by the character
+\item col_names: A vector of characters identifying the columns of the mutation matrix. Each entry will be comprised of two parts separated by the character
 '_', the first identifying the gene in question and the second identifying the mutation type. E.g. 'GENE1_NS" where 'GENE1' is an element of gene_list,
 and 'NS' is an element of the dictionary vector.
 }
@@ -56,5 +56,5 @@ table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_"
 
 print(names(table))
 print(table$matrix[1:10,1:10])
-print(table$colnames[1:10])
+print(table$col_names[1:10])
 }

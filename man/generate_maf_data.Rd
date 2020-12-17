@@ -5,8 +5,8 @@
 \title{Generate mutation data.}
 \usage{
 generate_maf_data(
-  n_samples = 20,
-  n_genes = 50,
+  n_samples = 100,
+  n_genes = 20,
   mut_types = NULL,
   data_dist = NULL,
   sample_rates = NULL,
@@ -15,7 +15,8 @@ generate_maf_data(
   sample_rates_dist = NULL,
   gene_rates_dist = NULL,
   gene_lengths_dist = NULL,
-  bmr_genes_prop = 0.9,
+  bmr_genes_prop = 0.2,
+  output_rates = FALSE,
   seed_id = 1234
 )
 }
@@ -57,6 +58,9 @@ Directly provide the distribution of gene lengths, as a function of the number o
 \item{bmr_genes_prop}{(numeric)
 The proportion of genes that follow the background mutation rate. If specified (as is automatic), this proportion of genes
 will have gene-specific rates equal to 1. By setting to be NULL, can avoid applying this step.}
+
+\item{output_rates}{(logical)
+If TRUE, will include the sample and gene rates in the output.}
 
 \item{seed_id}{(numeric)
 Input value for the function set.seed().}
