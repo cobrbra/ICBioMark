@@ -36,11 +36,11 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 
   set.seed(seed_id)
 
-  if (is.null(tables) & any(is.null(matrix), is.null(sample_list), is.null(gene_list), is.null(mut_types_list), is.null(col_names))) {
+  if (is.null(table) & any(is.null(matrix), is.null(sample_list), is.null(gene_list), is.null(mut_types_list), is.null(col_names))) {
     stop("If not providing a full tables object, must provide the inputs sample_list, gene_list, mut_types_list and col_names")
   }
 
-  if(!is.null(tables)) {
+  if(!is.null(table)) {
     matrix <- table$matrix
     sample_list <- table$sample_list
     gene_list <- table$gene_list
@@ -53,7 +53,7 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
   n_mut_types <- length(mut_types_list)
 
   if (any(dim(matrix) != c(n_samples, n_genes * n_mut_types))) {
-    stop(paste0("Matrix has dimension ", dim(matrix), ", should have dimension ", c(n_samplesm, n_genes * n_mut_types)))
+    stop(paste0("Matrix has dimension ", dim(matrix), ", should have dimension ", c(n_samples, n_genes * n_mut_types)))
   }
 
   # Making output vector
