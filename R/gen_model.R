@@ -31,6 +31,9 @@
 #' @export
 #'
 #' @examples
+#' example_gen_model <- fit_gen_model(example_maf_data$gene_lengths, table = example_tables$train)
+#' print(names(example_gen_model))
+
 
 fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_list = NULL, mut_types_list = NULL, col_names = NULL, table = NULL, nlambda = 100, n_folds = 10, maxit = 1e9, seed_id = 1234) {
 

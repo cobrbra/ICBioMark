@@ -133,6 +133,8 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 #' Optional parameter specifying the set of samples to include in the mutation matrix.
 #' @param gene_list (character)
 #' Optional parameter specifying the set of genes to include in the mutation matrix.
+#' @param acceptable_genes (character)
+#' Optional parameter specifying a set of acceptable genes, for example those which are in an ensembl databse.
 #' @param for_biomarker (character)
 #' Used for defining a dictionary of mutations. See the function get_mutation_dictionary() for details.
 #' @param include_synonymous (logical)
@@ -154,13 +156,13 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 #' @examples
 #' # We use the preloaded maf file example_maf_data
 #' # Now we make a mutation matrix
-#' table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
+#' table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))
 #'
 #' print(names(table))
 #' print(table$matrix[1:10,1:10])
 #' print(table$col_names[1:10])
 
-get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_biomarker = "TIB", include_synonymous = TRUE, dictionary = NULL) {
+get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, acceptable_genes = NULL, for_biomarker = "TIB", include_synonymous = TRUE, dictionary = NULL) {
 
   if (is.null(sample_list)) {
     sample_list <- unique(maf$Tumor_Sample_Barcode)
@@ -173,6 +175,10 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
 
   if (is.null(gene_list)) {
     gene_list <- unique(maf$Hugo_Symbol)
+  }
+
+  if (!is.null(acceptable_genes)) {
+    gene_list <- intersect(gene_list, acceptable_genes)
   }
 
   n_genes <- length(gene_list)
@@ -218,6 +224,8 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
 #' Optional parameter specifying the set of samples to include in the mutation matrices.
 #' @param gene_list (character)
 #' Optional parameter specifying the set of genes to include in the mutation matrices.
+#' @param acceptable_genes (character)
+#' Optional parameter specifying a set of acceptable genes, for example those which are in an ensembl databse.
 #' @param for_biomarker (character)
 #' Used for defining a dictionary of mutations. See the function get_mutation_dictionary() for details.
 #' @param include_synonymous (logical)
@@ -233,12 +241,13 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, for_bi
 #' @export
 #'
 #' @examples
-#' tables <- get_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
+#' tables <- get_mutation_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))
 #'
 #' print(names(tables))
 #' print(names(tables$train))
 
-get_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0.15), sample_list = NULL, gene_list = NULL, for_biomarker = "TIB", include_synonymous = TRUE, dictionary = NULL, seed_id = 1234) {
+get_mutation_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0.15), sample_list = NULL, gene_list = NULL, acceptable_genes = NULL,
+                                for_biomarker = "TIB", include_synonymous = TRUE, dictionary = NULL, seed_id = 1234) {
 
   set.seed(seed_id)
   if (is.null(sample_list)) {
@@ -254,9 +263,142 @@ get_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0.15), sam
   test_samples <- setdiff(sample_list, c(train_samples, val_samples))
 
   split_matrices <- purrr::map(list(train = train_samples, val = val_samples, test = test_samples), ~ get_table_from_maf(maf = maf, sample_list = ., gene_list = gene_list,
-                                                                                                       for_biomarker = for_biomarker, include_synonymous = include_synonymous,
-                                                                                                       dictionary = dictionary))
+                                                                                                       acceptable_genes = acceptable_genes, for_biomarker = for_biomarker,
+                                                                                                       include_synonymous = include_synonymous, dictionary = dictionary))
 
   return(split_matrices)
 
+
+  }
+
+#' Produce a Table of Biomarker Values from a MAF
+#'
+#' @param maf (dataframe)
+#' A table of annotated mutations containing the columns 'Tumor_Sample_Barcode', 'Hugo_Symbol', and 'Variant_Classification'.
+#' @param biomarker (character)
+#' Which biomarker needs calculating? If "TMB" or "TIB", then appropriate mutation types will be selected. Otherwise, will be interpreted as a vector of characters
+#' denoting mutation types to include.
+#' @param sample_list (character)
+#' Vector of characters giving a list of values of Tumor_Sample_Barcode to include.
+#' @param gene_list (character)
+#' Vector of characters giving a list of genes to include in calculation of biomarker.
+#' @param biomarker_name (character)
+#' Name of biomarker. Only needed if biomarker is not "TMB" or "TIB"
+#'
+#' @return
+#' A dataframe with two columns, 'Tumor_Sample_Barcode' and values of the biomarker specified.
+#'
+#' @export
+#'
+#' @examples print(head(get_biomarker_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))))
+
+get_biomarker_from_maf <- function(maf, biomarker = "TIB", sample_list = NULL, gene_list = NULL, biomarker_name = NULL) {
+  if (is.null(sample_list)) {
+    sample_list <- unique(maf$Tumor_Sample_Barcode)
+  }
+
+  if (is.null(gene_list)) {
+    gene_list <- unique(maf$Hugo_Symbol)
+  }
+
+  if (biomarker == "TMB") {
+    mut_types <- c('Missense_Mutation', 'Nonsense_Mutation',
+                       'Splice_Site', 'Translation_Start_Site',
+                       'Nonstop_Mutation', 'In_Frame_Ins',
+                       'In_Frame_Del', 'Frame_Shift_Del',
+                       'Frame_Shift_Ins')
+
+    if (is.null(biomarker_name)) {
+      biomarker_name <- "TMB"
+    }
+  }
+
+  else if (biomarker == "TIB") {
+    mut_types <- c('Frame_Shift_Ins', 'Frame_Shift_Del')
+
+    if (is.null(biomarker_name)) {
+      biomarker_name <- "TIB"
+    }
+  }
+
+  else {
+    mut_types <- biomarker
+    if (is.null(biomarker_name)) {
+      biomarker_name <- "biomarker"
+    }
+  }
+
+  abridged_maf <- dplyr::filter(maf, maf$Tumor_Sample_Barcode %in% sample_list,
+                                     maf$Hugo_Symbol %in% gene_list,
+                                     maf$Variant_Classification %in% mut_types)
+
+  table <- dplyr::ungroup(dplyr::count(dplyr::group_by(abridged_maf, abridged_maf$Tumor_Sample_Barcode)))
+  colnames(table) <- c("Tumor_Sample_Barcode", biomarker_name)
+
+  zero_samples <- setdiff(sample_list, table$Tumor_Sample_Barcode)
+
+  if (length(zero_samples) > 0) {
+    zeros_table <- data.frame(Tumor_Sample_Barcode = zero_samples, biomarker = rep(0, length(zero_samples)), stringsAsFactors = FALSE)
+    names(zeros_table) <- c("Tumor_Sample_Barcode", biomarker_name)
+
+    table <- as.data.frame(dplyr::bind_rows(table, zeros_table))
+  }
+
+  rownames(table) <- table$Tumor_Sample_Barcode
+  table <- table[sample_list,]
+
+  return(table)
+}
+
+#' True Biomarker Values on Training, Validation and Test Sets
+#'
+#' @param maf (dataframe)
+#' A table of annotated mutations containing the columns 'Tumor_Sample_Barcode', 'Hugo_Symbol', and 'Variant_Classification'.
+#' @param biomarker (character)
+#' Which biomarker needs calculating? If "TMB" or "TIB", then appropriate mutation types will be selected. Otherwise, will be interpreted as a vector of characters
+#' denoting mutation types to include.
+#' @param sample_list (character)
+#' Vector of characters giving a list of values of Tumor_Sample_Barcode to include.
+#' @param gene_list (character)
+#' Vector of characters giving a list of genes to include in calculation of biomarker.
+#' @param biomarker_name (character)
+#' Name of biomarker. Only needed if biomarker is not "TMB" or "TIB"
+#' @param tables (list)
+#' Optional paramater, the output of a call to get_mutation_tables(), which already has a train/val/test split.
+#' @param split (numeric)
+#' Optional parameter directly specifying the proportions of a train/test/val split.
+#' @param seed_id (numeric)
+#' Input value for the function set.seed().
+#'
+#' @return A list of three objects: 'train', 'val' and 'test. Each comprises a dataframe with two columns, denoting sample ID and biomarker value.
+#' @export
+#'
+#' @examples print(head(get_biomarker_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))))
+
+get_biomarker_tables <- function(maf, biomarker = "TIB", sample_list = NULL, gene_list = NULL, biomarker_name = NULL,
+                                 tables = NULL, split = c(train = 0.7, val = 0.15, test = 0.15), seed_id = 1234) {
+  set.seed(seed_id)
+  if (is.null(tables)) {
+    if (is.null(sample_list)) {
+      sample_list <- unique(maf$Tumor_Sample_Barcode)
+    }
+
+    if (is.null(gene_list)) {
+      gene_list <- unique(maf$Hugo_Symbol)
+    }
+    split <- split / sum(split)
+    train_samples <- sample(sample_list, size = floor(split['train']*length(sample_list)), replace = FALSE)
+    val_samples <- sample(setdiff(sample_list, train_samples), floor(split['val']*length(sample_list)), replace = FALSE)
+    test_samples <- setdiff(sample_list, c(train_samples, val_samples))
+  }
+  else {
+    train_samples <- tables$train$sample_list
+    val_samples <- tables$val$sample_list
+    test_samples <- tables$test$sample_list
+  }
+
+  split_biomarker_tables <- purrr::map(list(train = train_samples, val = val_samples, test = test_samples),
+                                       ~ get_biomarker_from_maf(maf = maf, biomarker = biomarker, sample_list = ., gene_list = gene_list, biomarker_name = biomarker_name))
+
+  return(split_biomarker_tables)
 }

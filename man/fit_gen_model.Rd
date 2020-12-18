@@ -63,3 +63,7 @@ A list comprising three objets:
 \description{
 Fit Generative Model
 }
+\examples{
+example_gen_model <- fit_gen_model(example_maf_data$gene_lengths, table = example_tables$train)
+print(names(example_gen_model))
+}

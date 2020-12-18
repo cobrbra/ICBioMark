@@ -8,6 +8,7 @@ get_table_from_maf(
   maf,
   sample_list = NULL,
   gene_list = NULL,
+  acceptable_genes = NULL,
   for_biomarker = "TIB",
   include_synonymous = TRUE,
   dictionary = NULL
@@ -22,6 +23,9 @@ Optional parameter specifying the set of samples to include in the mutation matr
 
 \item{gene_list}{(character)
 Optional parameter specifying the set of genes to include in the mutation matrix.}
+
+\item{acceptable_genes}{(character)
+Optional parameter specifying a set of acceptable genes, for example those which are in an ensembl databse.}
 
 \item{for_biomarker}{(character)
 Used for defining a dictionary of mutations. See the function get_mutation_dictionary() for details.}
@@ -52,7 +56,7 @@ will likely be very sparse, so we save it as a sparse matrix for efficiency..
 \examples{
 # We use the preloaded maf file example_maf_data
 # Now we make a mutation matrix
-table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:20))
+table <- get_table_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))
 
 print(names(table))
 print(table$matrix[1:10,1:10])
