@@ -45,3 +45,26 @@
 #'   \item{s_min}{The index of the regularisation penalty minimising average deviance across folds.}
 #' }
 "example_gen_model"
+
+#' Tumour Mutation Burden of Example Train, Validation and Test Data.
+#'
+#' Produced using the function get_biomarker_tables(), and from the example MAF data attached in example_maf_data$maf.
+#'
+#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' \describe{
+#'   \item{Tumor_Sample_Barcode}{A unique ID for each sample.}
+#'   \item{TMB}{The value of Tumour Mutation Burden for that sample.}
+#' }
+"example_tmb_tables"
+
+#' Tumour Indel Burden of Example Train, Validation and Test Data.
+#'
+#' Produced using the function get_biomarker_tables(), and from the example MAF data attached in example_maf_data$maf.
+#'
+#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' \describe{
+#'   \item{Tumor_Sample_Barcode}{A unique ID for each sample.}
+#'   \item{TIB}{The value of Tumour Indel Burden for that sample.}
+#' }
+"example_tib_tables"
+
