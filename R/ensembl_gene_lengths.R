@@ -1,0 +1,11 @@
+#' Gene Lengths from the Ensembl Database
+#'
+#'
+#'
+#' @format A dataframe with two columns:
+#' \describe{
+#'   \item{Hugo_Symbol}{The names of all nuclear genes in humans for which ensembl entries with coding sequence lengths exist.}
+#'   \item{max_cds}{The maximum coding sequence for each gene as given by the ensembl database.}
+#' }
+#' @source \url{https://www.ensembl.org/}
+"ensembl_gene_lengths"
