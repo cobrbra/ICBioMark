@@ -25,3 +25,20 @@ test_that("A simple call to get_mutation_tables() has the right structure and va
 
   expect_equal(output, example_tables)
 })
+
+test_that("Simple calls to get_biomarker_tables() has the right structure and value", {
+  tmb <- get_biomarker_tables(maf = example_maf_data$maf, biomarker = "TMB", sample_list = paste0("SAMPLE_", 1:100))
+  tib <- get_biomarker_tables(maf = example_maf_data$maf, biomarker = "TIB", sample_list = paste0("SAMPLE_", 1:100))
+
+  expect_is(tmb, "list")
+  expect_is(tib, "list")
+
+  expect_equal(names(tmb), c("train", "val", "test"))
+  expect_equal(names(tib), c("train", "val", "test"))
+
+  expect_equal(colnames(tmb$train), c("Tumor_Sample_Barcode", "TMB"))
+  expect_equal(colnames(tib$train), c("Tumor_Sample_Barcode", "TIB"))
+
+  expect_equal(tmb, example_tmb_tables)
+  expect_equal(tib, example_tib_tables)
+})
