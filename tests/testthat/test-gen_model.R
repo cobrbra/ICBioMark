@@ -4,7 +4,13 @@ test_that("A simple call to fit_gen_model() has the right format and value of ou
   output <- fit_gen_model(gene_lengths = example_maf_data$gene_lengths, table = example_tables$train)
 
   expect_is(output, "list")
-  expect_equal(names(output), c("fit", "dev", "s_min"))
+  expect_equal(names(output), c("fit", "dev", "s_min", "names"))
 
   expect_equal(output, example_gen_model)
+})
+
+test_that("The output of vis_model_fit has not changed", {
+  output <- vis_model_fit(example_gen_model)
+
+  expect_equal_to_reference(output, file = "datatest_vis_plot")
 })

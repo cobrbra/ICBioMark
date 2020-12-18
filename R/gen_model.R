@@ -21,13 +21,15 @@
 #' @param maxit (numeric)
 #' Technical parameter passed to the function glmnet::glmnet().
 #' @param seed_id (numeric)
-#' #' Input value for the function set.seed().
-#'
+#' Input value for the function set.seed().
+#' @param progress (logical)
+#' Show progress bars and text.
 #'
 #' @return A list comprising three objets:
 #' * An object 'fit', a fitted glmnet model.
 #' * A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.
 #' * An integer 's_min', the index of the regularsisation penalty minimising cross-validation deviance.
+#' * A list 'names', containing the sample, gene, and mutation type information of the training data.
 #' @export
 #'
 #' @examples
@@ -35,9 +37,12 @@
 #' print(names(example_gen_model))
 
 
-fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_list = NULL, mut_types_list = NULL, col_names = NULL, table = NULL, nlambda = 100, n_folds = 10, maxit = 1e9, seed_id = 1234) {
+fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_list = NULL, mut_types_list = NULL, col_names = NULL,
+                          table = NULL, nlambda = 100, n_folds = 10, maxit = 1e9, seed_id = 1234, progress = FALSE) {
 
   set.seed(seed_id)
+  if (progress) {trace.it = 1}
+  else {trace.it = 0}
 
   if (is.null(table) & any(is.null(matrix), is.null(sample_list), is.null(gene_list), is.null(mut_types_list), is.null(col_names))) {
     stop("If not providing a full tables object, must provide the inputs sample_list, gene_list, mut_types_list and col_names")
@@ -86,11 +91,11 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
   weighted_observations <- ifelse(weights == 0, 0, as.vector(mutation_vector)/weights)
 
   # First (full dataset) run
-  print("First glmnet run (full dataset)")
-  fit <- glmnet::glmnet(x = design_matrix, y = weighted_observations, nlambda = nlambda, weights = weights, family = "poisson", trace.it = 1, maxit = maxit)
+  if (progress) {print("First glmnet run (full dataset)")}
+  fit <- glmnet::glmnet(x = design_matrix, y = weighted_observations, nlambda = nlambda, weights = weights, family = "poisson", trace.it = trace.it, maxit = maxit)
 
   # Cross-validation
-  print("Cross-validation:")
+  if (progress) {print("Cross-validation:")}
   partitions <- sample(rep(1:n_folds, n_samples * n_genes * n_mut_types / n_folds), n_samples * n_genes * n_mut_types)
   dev <- matrix(0, n_folds, length(fit$lambda))
 
@@ -99,81 +104,102 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
     part.response <- weighted_observations[partitions != fold]
     part.weights <- weights[partitions != fold]
 
-    writeLines(paste("\nFitting glmnet on fold", fold))
-    part.fit <- glmnet::glmnet(part.design, y = part.response, family = "poisson", lambda = fit$lambda, weights = part.weights, trace.it = 1, maxit = maxit)
+    if (progress) {writeLines(paste("\nFitting glmnet on fold", fold))}
+    part.fit <- glmnet::glmnet(part.design, y = part.response, family = "poisson", lambda = fit$lambda, weights = part.weights, trace.it = trace.it, maxit = maxit)
     part.weights <- NULL; part.design <- NULL; part.response <- NULL;
 
-    print("Computing statistics")
+    if (progress) {print("Computing statistics")}
     ### This code should be made much simpler - it was originally written to squeeze the maximum amount out of a laptop without crashing.
-    pb <- utils::txtProgressBar(max = 15, width = 100, style = 3)
+    if (progress) {pb <- utils::txtProgressBar(max = 15, width = 100, style = 3)}
 
     part.test.design <- design_matrix[partitions == fold,]
-    utils::setTxtProgressBar(pb, 1)
+    if (progress) {utils::setTxtProgressBar(pb, 1)}
 
     part.test.product <- part.test.design %*% part.fit$beta
-    utils::setTxtProgressBar(pb, 2)
+    if (progress) {utils::setTxtProgressBar(pb, 2)}
 
     part.test.design <- NULL;
 
     part.test.product <- part.test.product + part.fit$a0
-    utils::setTxtProgressBar(pb, 3)
+    if (progress) {utils::setTxtProgressBar(pb, 3)}
 
     part.fit <- NULL;
 
     part.test.product <- exp(part.test.product)
-    utils::setTxtProgressBar(pb, 4)
+    if (progress) {utils::setTxtProgressBar(pb, 4)}
 
     part.test.weights <- Matrix::Matrix(rep(weights[partitions == fold], length(fit$lambda)), n_samples*n_genes*n_mut_types/n_folds, length(fit$lambda))
-    utils::setTxtProgressBar(pb, 5)
+    if (progress) {utils::setTxtProgressBar(pb, 5)}
 
     part.test.predict <- part.test.weights * part.test.product
-    utils::setTxtProgressBar(pb, 6)
+    if (progress) {utils::setTxtProgressBar(pb, 6)}
 
     part.test.product <- NULL;  part.test.weights <- NULL
 
     part.test.response <- Matrix::Matrix(rep(mutation_vector[1:(n_samples*n_mut_types*n_genes),][partitions == fold], length(fit$lambda)), n_samples*n_genes*n_mut_types/n_folds, length(fit$lambda), sparse = TRUE)
-    utils::setTxtProgressBar(pb, 7)
+    if (progress) {utils::setTxtProgressBar(pb, 7)}
 
     part.test.residuals <- part.test.response - part.test.predict
-    utils::setTxtProgressBar(pb, 8)
+    if (progress) {utils::setTxtProgressBar(pb, 8)}
 
     part.test.logpredict <- ifelse(part.test.predict == 0, 0, log(part.test.predict))
-    utils::setTxtProgressBar(pb, 9)
+    if (progress) {utils::setTxtProgressBar(pb, 9)}
 
     part.test.predict <- NULL
 
     log_response <- mutation_vector[partitions == fold, ]
     log_response <- ifelse(log_response == 0, 0, log(log_response))
-    utils::setTxtProgressBar(pb, 10)
+    if (progress) {utils::setTxtProgressBar(pb, 10)}
 
     part.test.logresponse <- Matrix::Matrix(rep(log_response, length(fit$lambda)), n_samples*n_genes*n_mut_types/n_folds, length(fit$lambda), sparse = TRUE)
-    utils::setTxtProgressBar(pb, 11)
+    if (progress) {utils::setTxtProgressBar(pb, 11)}
 
     log_response <- NULL
 
     log_div <- part.test.logresponse - part.test.logpredict
-    utils::setTxtProgressBar(pb, 12)
+    if (progress) {utils::setTxtProgressBar(pb, 12)}
 
     part.test.logresponse <- NULL; part.test.logpredict <- NULL;
 
     log_div <- part.test.response*log_div
-    utils::setTxtProgressBar(pb, 13)
+    if (progress) {utils::setTxtProgressBar(pb, 13)}
 
     part.test.response <- NULL
 
     deviances <- log_div - part.test.residuals
-    utils::setTxtProgressBar(pb, 14)
+    if (progress) {utils::setTxtProgressBar(pb, 14)}
 
     part.test.residuals <- NULL; log_div <- NULL
 
     dev[fold,] <- 2*Matrix::colMeans(deviances)
-    utils::setTxtProgressBar(pb, 15)
+    if (progress) {utils::setTxtProgressBar(pb, 15)}
 
     deviances <- NULL
 
   }
 
   s_min <- max(which(colMeans(dev) == min(colMeans(dev))))
-  return(list(fit = fit, dev = dev, s_min = s_min))
 
+  names <- list(sample_list = sample_list, gene_list = gene_list, mut_types_list = mut_types_list, col_names = col_names)
+  return(list(fit = fit, dev = dev, s_min = s_min, names = names))
+
+}
+
+vis_model_fit <- function(gen_model, x_sparsity = FALSE, y_sparsity = FALSE, mut_type = NULL) {
+  fit_data <- data.frame(log_lambda = log(gen_model$fit$lambda),
+                         nzero = Matrix::colSums(gen_model$fit$beta != 0),
+                         Deviance = colMeans(gen_model$dev),
+                         sd = matrixStats::colSds(gen_model$dev))
+  if (!x_sparsity & !y_sparsity) {
+    p <- ggplot2::ggplot(fit_data, ggplot2::aes(x = fit_data$log_lambda, y = fit_data$Deviance, ymin = fit_data$Deviance - fit_data$sd,
+                                                ymax = fit_data$Deviance + fit_data$sd, colour = (fit_data$Deviance == min(fit_data$Deviance)))) +
+      ggplot2::geom_pointrange() + ggplot2::labs(x = latex2exp::TeX("$\\log(\\kappa_1)$"), y = "Average Deviance") +
+      ggplot2::scale_colour_manual(values = c("black", "red")) +
+      ggplot2::theme_minimal() + ggplot2::theme(legend.position = "none") + ggplot2::theme(axis.title.y = ggplot2::element_text(vjust = 2))
+  }
+  else {
+
+  }
+
+  return(p)
 }

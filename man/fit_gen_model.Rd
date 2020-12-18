@@ -15,7 +15,8 @@ fit_gen_model(
   nlambda = 100,
   n_folds = 10,
   maxit = 1e+09,
-  seed_id = 1234
+  seed_id = 1234,
+  progress = FALSE
 )
 }
 \arguments{
@@ -50,7 +51,10 @@ The number of cross-validation folds to employ.}
 Technical parameter passed to the function glmnet::glmnet().}
 
 \item{seed_id}{(numeric)
-#' Input value for the function set.seed().}
+Input value for the function set.seed().}
+
+\item{progress}{(logical)
+Show progress bars and text.}
 }
 \value{
 A list comprising three objets:
@@ -58,6 +62,7 @@ A list comprising three objets:
 \item An object 'fit', a fitted glmnet model.
 \item A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.
 \item An integer 's_min', the index of the regularsisation penalty minimising cross-validation deviance.
+\item A list 'names', containing the sample, gene, and mutation type information of the training data.
 }
 }
 \description{

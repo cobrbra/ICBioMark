@@ -25,6 +25,9 @@ Imports:
     magrittr,
     dplyr,
     purrr,
-    biomaRt
+    biomaRt,
+    latex2exp,
+    matrixStats,
+    ggplot2
 Depends: 
     R (>= 2.10)
