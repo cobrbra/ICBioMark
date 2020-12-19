@@ -64,6 +64,8 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
     stop(paste0("Matrix has dimension ", dim(matrix), ", should have dimension ", c(n_samples, n_genes * n_mut_types)))
   }
 
+  rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
+
   # Making output vector
   mutation_vector <- matrix
   dim(mutation_vector) <- c(n_samples * n_genes * n_mut_types, 1)
@@ -85,7 +87,7 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 
   # We use weights (rather than offsets) to fit the model, as it makes glmnet more efficient.
   weights <- rep(t_s, each = n_samples, times = n_genes)* rep(t_i, times = n_mut_types*n_genes)
-  weights <- weights*rep(gene_lengths$max_cds, each = n_samples*n_mut_types)
+  weights <- weights*rep(gene_lengths[gene_list,]$max_cds, each = n_samples*n_mut_types)
   weights <- weights/mean(weights)
 
   weighted_observations <- ifelse(weights == 0, 0, as.vector(mutation_vector)/weights)
