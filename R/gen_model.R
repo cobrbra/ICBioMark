@@ -187,6 +187,25 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 
 }
 
+#' Visualise Generative Model Fit
+#'
+#' @param gen_model (list)
+#' A generative model fitted by fit_gen_model()
+#' @param x_sparsity
+#' Show model sparsity on x axis rather than lambda.
+#' @param y_sparsity
+#' Show model sparsity on y axis rather than deviance.
+#' @param mut_type
+#' Produce separate plots for each mutation type.
+#'
+#' @return
+#' Summary plot of the generative model fit across folds.
+#'
+#' @export
+#'
+#' @examples
+#' p <- vis_model_fit(example_gen_model)
+
 vis_model_fit <- function(gen_model, x_sparsity = FALSE, y_sparsity = FALSE, mut_type = NULL) {
   fit_data <- data.frame(log_lambda = log(gen_model$fit$lambda),
                          nzero = Matrix::colSums(gen_model$fit$beta != 0),
