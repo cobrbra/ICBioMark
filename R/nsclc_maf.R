@@ -6,6 +6,9 @@
 #'     \item{Tumor_Sample_Barcode}{A sample id for each mutation.}
 #'     \item{Hugo_Symbol}{The name of the gene location for each mutation.}
 #'     \item{Variant_Classification}{The mutation type for each mutation.}
+#'     \item{Chromosome}{Chromosome on which the mutation occurred.}
+#'     \item{Start_Position}{Start nucleotide location for mutation.}
+#'     \item{End_Position}{End nucleotide location for mutation.}
 #'    }
 #' @source \url{https://www.cbioportal.org/study/summary?id=nsclc_tcga_broad_2016}
 #'
