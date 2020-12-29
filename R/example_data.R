@@ -68,3 +68,21 @@
 #' }
 "example_tib_tables"
 
+#' First-Fit Predictive Model Fitting on Example Data
+#'
+#' Produced using the function pred_first_fit().
+#'
+#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' \describe{
+#'   \item{fit}{A gglasso fit.}
+#'   \item{panel_genes}{A matrix where each row corresponds to a gene, each column to an iteration of the group
+#'   lasso with a different penalty factor, and the elements booleans specifying whether that gene was selected
+#'   to be included in that iteration.}
+#'   \item{panel_lengths}{A vector giving total panel length for each gglasso iteration.}
+#'   \item{p}{The vector of weights used in the optimisation procedure.}
+#'   \item{K}{The bias penalty factor used in the optimisation procedure.}
+#'   \item{names}{Gene and mutation type information as used when fitting the generative model.}
+#'
+#' }
+"example_pred_fit"
+

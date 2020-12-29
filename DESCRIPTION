@@ -28,6 +28,7 @@ Imports:
     biomaRt,
     latex2exp,
     matrixStats,
-    ggplot2
+    ggplot2,
+    gglasso
 Depends: 
     R (>= 2.10)

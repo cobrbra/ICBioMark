@@ -2,9 +2,13 @@
 
 export(fit_gen_model)
 export(generate_maf_data)
+export(get_K)
 export(get_biomarker_from_maf)
 export(get_biomarker_tables)
 export(get_mutation_dictionary)
 export(get_mutation_tables)
+export(get_p)
+export(get_panels_from_fit)
 export(get_table_from_maf)
+export(pred_first_fit)
 export(vis_model_fit)
