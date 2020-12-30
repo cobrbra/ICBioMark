@@ -341,9 +341,10 @@ get_biomarker_from_maf <- function(maf, biomarker = "TIB", sample_list = NULL, g
     zeros_table <- data.frame(Tumor_Sample_Barcode = zero_samples, biomarker = rep(0, length(zero_samples)), stringsAsFactors = FALSE)
     names(zeros_table) <- c("Tumor_Sample_Barcode", biomarker_name)
 
-    table <- as.data.frame(dplyr::bind_rows(table, zeros_table))
+    table <- dplyr::bind_rows(table, zeros_table)
   }
 
+  table <- as.data.frame(table)
   rownames(table) <- table$Tumor_Sample_Barcode
   table <- table[sample_list,]
 
