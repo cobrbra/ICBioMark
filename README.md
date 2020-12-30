@@ -6,10 +6,10 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-Welcome to ICBioMark. Based on the paper “Data-driven design of targeted
+Welcome to ICBioMark, based on the paper “Data-driven design of targeted
 gene panels forestimating immunotherapy biomarkers”, *Bradley and
 Cannings* (currently being written
-[here](https://github.com/cobrbra/TargetedPanelEstimation_Paper)),
+[here](https://github.com/cobrbra/TargetedPanelEstimation_Paper)).
 ICBioMark is designed to implement regularised optimisation methods for
 the design and use of targeted gene panels in predicting
 immunotherapeutic biomarkers such as Tumour Mutation Burden (TMB) and
@@ -25,17 +25,22 @@ repository (using the
 package) with:
 
 ``` r
-devtools::install_.packages_github("cobrbra/ICBioMark")
+devtools::install_github("cobrbra/ICBioMark")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Upon installation we can load the package.
 
 ``` r
 library(ICBioMark)
 ## basic example code
 ```
+
+To demonstrate the typical workflow for using ICBioMark, we play around
+with a small and friendly example dataset. This is saved into the
+package, but just comes from the data simulation function
+`{r eval = FALSE} generate_maf_data()`.
 
 What is special about using `README.Rmd` instead of just `README.md`?
 You can include R chunks like so:
