@@ -28,19 +28,67 @@ package) with:
 devtools::install_github("cobrbra/ICBioMark")
 ```
 
-## Example
+## Example Workflow
 
 Upon installation we can load the package.
 
 ``` r
 library(ICBioMark)
-## basic example code
 ```
 
 To demonstrate the typical workflow for using ICBioMark, we play around
-with a small and friendly example dataset. This is saved into the
+with a small and friendly example dataset. This is pre-loaded with the
 package, but just comes from the data simulation function
-`{r eval = FALSE} generate_maf_data()`.
+`generate_maf_data()`, so you can play around with datasets of different
+sizes and shapes.
+
+### Input Data
+
+Our example dataset, called `example_maf_data`, is a list with two
+elements: `maf` and `gene_lengths`. These are the two pieces of data
+that you’ll always need to use this package, and they look as follows:
+
+-   `maf` is a data frame in the MAF (mutation annotated format) style.
+    For a set of sequenced tumour/normal pairs, this means a table with
+    a row for every mutation identified, with columns corresponding to
+    properties such as the sample ID for the tumour of origin, the gene,
+    chromosome and nucelotide location of the mutation, and the type of
+    mutation observed. In the real world, MAF datasets often have lots
+    of extra information beyond this, but in our small example we’ve
+    just included sample, gene and mutation type (it’s all we’ll need!).
+    The top five rows look like this:
+
+``` r
+ # example_maf_data <- generate_maf_data()
+ knitr::kable(head(example_maf_data$maf, 5), row.names = FALSE)
+```
+
+| Tumor\_Sample\_Barcode | Hugo\_Symbol | Variant\_Classification |
+|:-----------------------|:-------------|:------------------------|
+| SAMPLE\_53             | GENE\_5      | Missense\_Mutation      |
+| SAMPLE\_27             | GENE\_7      | Missense\_Mutation      |
+| SAMPLE\_73             | GENE\_11     | Silent                  |
+| SAMPLE\_47             | GENE\_18     | 3’Flank                 |
+| SAMPLE\_36             | GENE\_19     | Missense\_Mutation      |
+
+-   `gene_lengths`, another data frame, this time containing the names
+    of genes that you’ll want to include in your modelling and their
+    length. Gene length is a complex and subtle thing to define - we
+    advise using coding length as defined in the
+    [Ensembl](https://www.ensembl.org/index.html) database. For this
+    example, however, gene lengths are again randomly chosen:
+
+``` r
+  knitr::kable(head(example_maf_data$gene_lengths, 5), row.names = FALSE)
+```
+
+| Hugo\_Symbol | max\_cds |
+|:-------------|---------:|
+| GENE\_1      |      961 |
+| GENE\_2      |     1009 |
+| GENE\_3      |     1011 |
+| GENE\_4      |      976 |
+| GENE\_5      |     1016 |
 
 What is special about using `README.Rmd` instead of just `README.md`?
 You can include R chunks like so:
