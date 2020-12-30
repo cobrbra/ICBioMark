@@ -196,6 +196,15 @@ of our model with `vis_model_fit()`.
 
 <img src="man/figures/README-example_gen_model-1.png" width="100%" />
 
+Since this is a small example, we don’t get a particularly strong
+signal, but we do see an optimum level of penalisation. (NB: the
+function `vis_model_fit()` essentially performs the same task as
+`glmnet::plot.cv.glmnet()`. In later versions the `glmnet` version will
+hopefully be directly applicable and `vis_model_fit()` will be
+redundant).
+
+### Fitting the Predictive Model
+
 ### Making Predictions
 
 ### Analysing Performance

@@ -94,6 +94,9 @@ There are relatively few decisions left to be made at this point: all we need to
 
 ```
 
+Since this is a small example, we don't get a particularly strong signal, but we do see an optimum level of penalisation. (NB: the function `vis_model_fit()` essentially performs the same task as `glmnet::plot.cv.glmnet()`. In later versions the `glmnet` version will hopefully be directly applicable and `vis_model_fit()` will be redundant).
+
+### Fitting the Predictive Model
 
 ### Making Predictions 
 
