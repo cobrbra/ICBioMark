@@ -60,6 +60,7 @@ that you’ll always need to use this package, and they look as follows:
 
 ``` r
  # example_maf_data <- generate_maf_data()
+
  kable(head(example_maf_data$maf, 5), row.names = FALSE)
 ```
 
@@ -98,7 +99,106 @@ information, but lots of missing values will cause issues with your
 model accuracy. Later versions of this package should be able to address
 missing gene length data.
 
-### Train/Val/Test and Training Matrix Construction
+### Train/Val/Test and Matrix Construction
+
+The MAF format is widely used and standardised, but not espeically
+helpful for our purposes. The ideal format for our data is a matrix,
+where every row corresponds to a sample, every column corresponds to a
+gene/mutation type combination, and each entry corresponds to how many
+mutations of that sample, gene and type were sequenced. At the same time
+as this, we’d like to separate our training data from separately
+reserved validation and test data. We do this using the function
+`get_mutation_tables()`.
+
+Before we do this, however, we need to talk about mutation types. Our
+procedure models different mutation types separately, so in theory one
+could have separate parameters for each mutation type
+(e.g. ‘Missense\_Mutation’ or ‘Silent’). However, doing so will vastly
+increase the computational complexity of fitting a generative model. It
+is also not particularly informative to fit parameters to extremely
+scarce mutation types. We therefore group mutation types together (and
+can filter some out if we don’t want to include them in our modelling).
+This will happen behind-the-scenes, but is worth knowing about to
+understand the outputs generated. Mutations types are grouped and
+filtered by the function `get_mutation_dictionary()`. In general we
+recommend separately modelling indel mutations (so that we can predict
+TIB later), synonymous mutations (as these don’t count towards TMB or
+TIB), and lumping together all other nonsynonymous mutation types. The
+function `get_mutation_dictionary()` produces a list of mutation types,
+with labels for their groupings. For example:
+
+``` r
+  kable(get_mutation_dictionary(), col.names = "Label")
+```
+
+|                          | Label |
+|:-------------------------|:------|
+| Missense\_Mutation       | NS    |
+| Nonsense\_Mutation       | NS    |
+| Splice\_Site             | NS    |
+| Translation\_Start\_Site | NS    |
+| Nonstop\_Mutation        | NS    |
+| In\_Frame\_Ins           | NS    |
+| In\_Frame\_Del           | NS    |
+| Frame\_Shift\_Del        | I     |
+| Frame\_Shift\_Ins        | I     |
+| Silent                   | S     |
+| Splice\_Region           | S     |
+| 3’Flank                  | S     |
+| 5’Flank                  | S     |
+| Intron                   | S     |
+| RNA                      | S     |
+| 3’UTR                    | S     |
+| 5’UTR                    | S     |
+
+We’ve given each mutation type one of three labels: “NS”, “S” and “I”.
+We could have excluded synonymous mutation types by using
+`get_mutation_dictionary(include_synonymous = FALSE)`.
+
+Now we can produce our training, validation and test sets (again for
+this example workflow these are pre-loaded). The object produced has
+three elements: ‘train’, ‘val’ and ‘test’. Each of these contains a
+sparse mutation matrix (‘matrix’) and other information describing the
+contents of the matrix (‘sample\_list’, ‘gene\_list’, ‘mut\_types\_list’
+and ‘col\_names’). We can see that the list of mutation types contains
+the three labels we specified above
+
+``` r
+  #example_tables <- get_mutation_tables(example_maf_data$maf, 
+  #                   sample_list = paste0("SAMPLE_", 1:100))
+
+  print(example_tables$train$mut_types_list)
+#> [1] "NS" "I"  "S"
+```
+
+and that the columns of each matrix correspond to each combination of
+mutation type and gene:
+
+``` r
+  print(head(example_tables$train$col_names, 10))
+#>  [1] "GENE_1_NS" "GENE_1_I"  "GENE_1_S"  "GENE_2_NS" "GENE_2_I"  "GENE_2_S" 
+#>  [7] "GENE_3_NS" "GENE_3_I"  "GENE_3_S"  "GENE_4_NS"
+```
+
+### Fitting the Generative Model
+
+There are relatively few decisions left to be made at this point: all we
+need to do to fit a generative model is to provide gene lengths data and
+training data to the function `fit_gen_model()`. We can visualise output
+of our model with `vis_model_fit()`.
+
+``` r
+  # example_gen_model <- fit_gen_model(example_maf_data$gene_lengths, 
+  #                       table = example_tables$train)
+
+  print(vis_model_fit(example_gen_model))
+```
+
+<img src="man/figures/README-example_gen_model-1.png" width="100%" />
+
+### Making Predictions
+
+### Analysing Performance
 
 ## Getting Help
 
