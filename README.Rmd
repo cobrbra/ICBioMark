@@ -5,7 +5,8 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
+library(knitr)
+opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
@@ -47,13 +48,21 @@ Our example dataset, called `example_maf_data`, is a list with two elements: `ma
  
 ```{r example_maf}
  # example_maf_data <- generate_maf_data()
- knitr::kable(head(example_maf_data$maf, 5), row.names = FALSE)
+ kable(head(example_maf_data$maf, 5), row.names = FALSE)
 ```
  * `gene_lengths`, another data frame, this time containing the names of genes that you'll want to include in your modelling and their length. Gene length is a complex and subtle thing to define - we advise using coding length as defined in the [Ensembl](https://www.ensembl.org/index.html) database. For this example, however, gene lengths are again randomly chosen:
  
 ``` {r example_gene_lengths}
-  knitr::kable(head(example_maf_data$gene_lengths, 5), row.names = FALSE)
+  kable(head(example_maf_data$gene_lengths, 5), row.names = FALSE)
 ```
+These are the only two bits of data required to use ICBioMark. Your gene lengths data can contain values for far more genes than are observed in your dataset, and it's not a huge problem if a couple of genes in a Whole-Exome Sequencing (WES) experiment are missing gene length information, but lots of missing values will cause issues with your model accuracy. Later versions of this package should be able to address missing gene length data.
+
+### Train/Val/Test and Training Matrix Construction
+
+
+## Getting Help
+Please do feel free to flag issues and requests on this repository. In dire need, you can try reaching me by [email](j.r.j.bradley@sms.ed.ac.uk), but I make no guarantees on speedy response via this route.
+
 
 What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 

@@ -60,7 +60,7 @@ that you’ll always need to use this package, and they look as follows:
 
 ``` r
  # example_maf_data <- generate_maf_data()
- knitr::kable(head(example_maf_data$maf, 5), row.names = FALSE)
+ kable(head(example_maf_data$maf, 5), row.names = FALSE)
 ```
 
 | Tumor\_Sample\_Barcode | Hugo\_Symbol | Variant\_Classification |
@@ -79,7 +79,7 @@ that you’ll always need to use this package, and they look as follows:
     example, however, gene lengths are again randomly chosen:
 
 ``` r
-  knitr::kable(head(example_maf_data$gene_lengths, 5), row.names = FALSE)
+  kable(head(example_maf_data$gene_lengths, 5), row.names = FALSE)
 ```
 
 | Hugo\_Symbol | max\_cds |
@@ -89,6 +89,23 @@ that you’ll always need to use this package, and they look as follows:
 | GENE\_3      |     1011 |
 | GENE\_4      |      976 |
 | GENE\_5      |     1016 |
+
+These are the only two bits of data required to use ICBioMark. Your gene
+lengths data can contain values for far more genes than are observed in
+your dataset, and it’s not a huge problem if a couple of genes in a
+Whole-Exome Sequencing (WES) experiment are missing gene length
+information, but lots of missing values will cause issues with your
+model accuracy. Later versions of this package should be able to address
+missing gene length data.
+
+### Train/Val/Test and Training Matrix Construction
+
+## Getting Help
+
+Please do feel free to flag issues and requests on this repository. In
+dire need, you can try reaching me by
+[email](j.r.j.bradley@sms.ed.ac.uk), but I make no guarantees on speedy
+response via this route.
 
 What is special about using `README.Rmd` instead of just `README.md`?
 You can include R chunks like so:
