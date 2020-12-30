@@ -211,9 +211,14 @@ vis_model_fit <- function(gen_model, x_sparsity = FALSE, y_sparsity = FALSE, mut
                          nzero = Matrix::colSums(gen_model$fit$beta != 0),
                          Deviance = colMeans(gen_model$dev),
                          sd = matrixStats::colSds(gen_model$dev))
+
+  fit_data$ymin <- fit_data$Deviance - fit_data$sd
+  fit_data$ymax <- fit_data$Deviance + fit_data$sd
+  fit_data$colour <- (fit_data$Deviance == min(fit_data$Deviance))
+
   if (!x_sparsity & !y_sparsity) {
-    p <- ggplot2::ggplot(fit_data, ggplot2::aes(x = fit_data$log_lambda, y = fit_data$Deviance, ymin = fit_data$Deviance - fit_data$sd,
-                                                ymax = fit_data$Deviance + fit_data$sd, colour = (fit_data$Deviance == min(fit_data$Deviance)))) +
+    p <- ggplot2::ggplot(fit_data, ggplot2::aes_string(x = "log_lambda", y = "Deviance", ymin = "ymin",
+                                                ymax = "ymax", colour = "colour")) +
       ggplot2::geom_pointrange() + ggplot2::labs(x = latex2exp::TeX("$\\log(\\kappa_1)$"), y = "Average Deviance") +
       ggplot2::scale_colour_manual(values = c("black", "red")) +
       ggplot2::theme_minimal() + ggplot2::theme(legend.position = "none") + ggplot2::theme(axis.title.y = ggplot2::element_text(vjust = 2))
