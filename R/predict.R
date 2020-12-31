@@ -140,7 +140,7 @@ get_panels_from_fit <- function(gene_lengths, fit, gene_list, mut_types_list) {
   panel_inclusion <- dplyr::group_by(pred_fit_abs, gene = factor(rep(gene_list,
                                             each = length(mut_types_list)),
                                         levels = gene_list))
-  panel_genes <- dplyr::select(dplyr::summarise_each(tbl = panel_inclusion, funs = sum), setdiff(colnames(panel_inclusion), "gene")) != 0
+  panel_genes <- dplyr::select(dplyr::summarise(tbl = panel_inclusion, dplyr::across(TRUE, sum)), setdiff(colnames(panel_inclusion), "gene")) != 0
   rownames(panel_genes) <- gene_list
   panel_gene_lengths <- gene_lengths[gene_list,]$max_cds
 
