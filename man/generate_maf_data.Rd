@@ -15,7 +15,7 @@ generate_maf_data(
   sample_rates_dist = NULL,
   gene_rates_dist = NULL,
   gene_lengths_dist = NULL,
-  bmr_genes_prop = 0.2,
+  bmr_genes_prop = 0.7,
   output_rates = FALSE,
   seed_id = 1234
 )
