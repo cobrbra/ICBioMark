@@ -66,11 +66,11 @@ that you’ll always need to use this package, and they look as follows:
 
 | Tumor\_Sample\_Barcode | Hugo\_Symbol | Variant\_Classification |
 |:-----------------------|:-------------|:------------------------|
-| SAMPLE\_53             | GENE\_5      | Missense\_Mutation      |
-| SAMPLE\_27             | GENE\_7      | Missense\_Mutation      |
-| SAMPLE\_73             | GENE\_11     | Silent                  |
-| SAMPLE\_47             | GENE\_18     | 3’Flank                 |
-| SAMPLE\_36             | GENE\_19     | Missense\_Mutation      |
+| SAMPLE\_96             | GENE\_14     | Missense\_Mutation      |
+| SAMPLE\_73             | GENE\_14     | Frame\_Shift\_Ins       |
+| SAMPLE\_55             | GENE\_4      | Missense\_Mutation      |
+| SAMPLE\_96             | GENE\_3      | Missense\_Mutation      |
+| SAMPLE\_38             | GENE\_7      | Missense\_Mutation      |
 
 -   `gene_lengths`, another data frame, this time containing the names
     of genes that you’ll want to include in your modelling and their
@@ -113,19 +113,20 @@ reserved validation and test data. We do this using the function
 Before we do this, however, we need to talk about mutation types. Our
 procedure models different mutation types separately, so in theory one
 could have separate parameters for each mutation type
-(e.g. ‘Missense\_Mutation’ or ‘Silent’). However, doing so will vastly
-increase the computational complexity of fitting a generative model. It
-is also not particularly informative to fit parameters to extremely
-scarce mutation types. We therefore group mutation types together (and
-can filter some out if we don’t want to include them in our modelling).
-This will happen behind-the-scenes, but is worth knowing about to
-understand the outputs generated. Mutations types are grouped and
-filtered by the function `get_mutation_dictionary()`. In general we
-recommend separately modelling indel mutations (so that we can predict
-TIB later), synonymous mutations (as these don’t count towards TMB or
-TIB), and lumping together all other nonsynonymous mutation types. The
-function `get_mutation_dictionary()` produces a list of mutation types,
-with labels for their groupings. For example:
+(e.g. ‘Missense\_Mutation’ or ‘Frame\_Shift\_Ins’). However, doing so
+will vastly increase the computational complexity of fitting a
+generative model. It is also not particularly informative to fit
+parameters to extremely scarce mutation types. We therefore group
+mutation types together (and can filter some out if we don’t want to
+include them in our modelling). This will happen behind-the-scenes, but
+is worth knowing about to understand the outputs generated. Mutations
+types are grouped and filtered by the function
+`get_mutation_dictionary()`. In general we recommend separately
+modelling indel mutations (so that we can predict TIB later), synonymous
+mutations (as these don’t count towards TMB or TIB), and lumping
+together all other nonsynonymous mutation types. The function
+`get_mutation_dictionary()` produces a list of mutation types, with
+labels for their groupings. For example:
 
 ``` r
   kable(get_mutation_dictionary(), col.names = "Label")

@@ -53,7 +53,7 @@
 generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, data_dist = NULL,
                               sample_rates = NULL, gene_rates = NULL, gene_lengths = NULL,
                               sample_rates_dist = NULL, gene_rates_dist = NULL, gene_lengths_dist = NULL,
-                              bmr_genes_prop = 0.2, output_rates = FALSE, seed_id = 1234) {
+                              bmr_genes_prop = 0.7, output_rates = FALSE, seed_id = 1234) {
 
   set.seed(seed_id)
 
@@ -101,7 +101,7 @@ generate_maf_data <- function(n_samples = 100, n_genes = 20, mut_types = NULL, d
         if (is.null(gene_rates_dist)) {
           gene_rates_dist <- function(n) {
 
-            return(stats::runif(n = n, min = 0.5, max = 1.5))}
+            return(10^stats::runif(n = n, min = -1, max = 1))}
         }
         gene_rates <- gene_rates_dist(n = n_genes)
         names(gene_rates) <- gene_list
