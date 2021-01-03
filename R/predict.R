@@ -125,7 +125,7 @@ get_K <- function(gen_model, p_norm, training_matrix, marker_training_values = N
 #' @export
 #'
 #' @examples
-#' panels <- get_panels_from_fit(example_maf_data$gene_lengths, example_pred_fit$fit,
+#' panels <- get_panels_from_fit(example_maf_data$gene_lengths, example_first_pred_tmb$fit,
 #' example_gen_model$names$gene_list, mut_types_list = example_gen_model$names$mut_types_list)
 #'
 #' print(panels$fit)
@@ -205,7 +205,7 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
 
   wrong_mutation_types <- setdiff(marker_mut_types, gen_model$names$mut_types_list)
   if (length(wrong_mutation_types) > 0) {
-    stop(paste0("Mutation types ", paste(wrong_mutation_types, collapse = ", ", " not in generative model.")))
+    stop(paste0("Mutation types ", paste(wrong_mutation_types, collapse = ", "), " not in generative model."))
   }
 
   n_samples <- nrow(training_matrix)
@@ -240,15 +240,119 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
   return(list(fit = fit, panel_genes = panels$panel_genes, panel_lengths = panels$panel_lengths, p = p$p, K = K, names = gen_model$names))
 }
 
-pred_refit_panel <- function(gen_model) {
+pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T", genes, biomarker = "TMB",
+                             marker_mut_types = c("NS", "I"), training_matrix = NULL,
+                             training_values = NULL) {
+  n_genes <- length(pred_first$names$gene_list)
+  n_mut_types <- length(pred_first$names$mut_types_list)
 
+  wrong_genes_model <- setdiff(genes, pred_first$names$gene_list)
+  if (length(wrong_genes_model) > 0) {
+    warning(paste("Eliminating the following genes not in the generative model: ", paste0(wrong_genes_model, collapse = ", ")))
+    genes <- intersect(genes, pred_first$names$gene_list)
+    }
+
+  wrong_genes_lengths <- setdiff(genes, gene_lengths$Hugo_Symbol)
+  if(length(wrong_genes_lengths > 0)) {
+    warning(paste("Eliminating the following genes without gene lengths: ", paste0(wrong_genes_lengths, collapse = ", ")))
+    genes <- intersect(genes, gene_lengths)
+  }
+
+  if (biomarker == "TIB") {
+    marker_mut_types <- c("I")
+  }
+  rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
+  if (length(genes) > 0) {
+    panel_lengths <- c(sum(gene_lengths[genes,]$max_cds))
+  }
+  else {
+    panel_lengths <- c(0)
+  }
+  cols_panel <- paste0(rep(genes, each = n_mut_types), "_", pred_first$names$mut_types_list)
+  panel_genes <- Matrix::Matrix(pred_first$names$col_names %in% cols_panel,
+                                nrow = n_genes * n_mut_types, ncol = 1,
+                                sparse = TRUE)
+
+  if (model == "T") {
+    if (is.null(pred_first)) {
+      stop("Need first-fit model (pred_first) for fitting T estimator.")
+    }
+
+    if (length(genes) > 0) {
+      p_panel <- pred_first$p[cols_panel]
+      p_reduced <- unlist(purrr::map(1:n_mut_types, ~sum(p_panel[seq(., length(p_panel), n_mut_types)])))
+      names(p_reduced) <- pred_first$names$mut_types_list
+      X_panel <- diag(p_reduced) + pred_first$K * p_reduced %*% t(p_reduced)
+      Y_panel <- (pred_first$K + (pred_first$names$mut_types_list %in% marker_mut_types))*p_reduced
+      w_panel <- solve(X_panel) %*% Y_panel
+      beta <- Matrix::Matrix(0, nrow = n_genes * n_mut_types, ncol = 1, sparse = TRUE)
+      rownames(beta) <- pred_first$names$col_names
+      beta[cols_panel, ] <- rep(w_panel, times = length(genes))
+      fit <- list(beta = beta)
+    }
+    else {
+      beta <- Matrix::Matrix(0, nrow = n_genes * n_mut_types, ncol = 1, sparse = TRUE)
+      fit <- list(beta = beta)
+    }
+  }
+  else if (model == "OLM") {
+    n_samples <- nrow(training_matrix)
+    if (is.null(training_matrix) | is.null(training_values)) {
+      stop("Need training matrix and values for OLM fitting.")
+    }
+    colnames(training_matrix) <- pred_first$names$col_names
+    training_values <- training_values[pred_first$names$sample_list,]
+    train <- as.data.frame(cbind(matrix(training_values[[biomarker]], n_samples, 1),
+                   as.matrix(training_matrix[,cols_panel])))
+    colnames(train) <- c(biomarker, cols_panel)
+    formula <- stats::as.formula(paste(biomarker, "~ . - 1"))
+    fit <- stats::lm(formula = formula, data = train)
+
+    fit$beta <- Matrix::Matrix(0, n_genes * n_mut_types, sparse = TRUE)
+    rownames(fit$beta) <- pred_first$names$col_names
+    fit$beta[cols_panel,] <- fit$coefficients
+    fit$beta[is.na(fit$beta)] <- 0
+
+  }
+  else if (model == "Count") {
+    if (is.null(training_matrix) | is.null(training_values)) {
+      stop("Need training matrix and values for Count fitting.")
+    }
+
+    n_samples <- nrow(training_matrix)
+    n_genes <- length(pred_first$names$gene_list)
+    n_mut_types <- length(pred_first$names$mut_types_list)
+
+    mutation_vector <- training_matrix
+    dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+    rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
+
+    t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
+                                       j = 1:(n_samples*n_genes*n_mut_types),
+                                       dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
+    t_s <- as.vector(t_s_getter %*% mutation_vector)
+    t_s_getter <- NULL
+
+    lengths_factor <- sum(gene_lengths[pred_first$names$gene_list, 'max_cds']) / sum(gene_lengths[genes, 'max_cds'])
+    mut_types_factor <- t_s[pred_first$names$mut_types_list %in% marker_mut_types] / sum(t_s)
+
+    beta <- Matrix::Matrix(0, nrow = n_genes * n_mut_types, ncol = 1, sparse = TRUE)
+    rownames(beta) <- pred_first$names$col_names
+    beta[cols_panel,] <- lengths_factor * mut_types_factor / length(genes)
+
+    fit <- list(beta = beta)
+  }
+
+  else {
+    stop("Model should be one of 'T', 'OLM', or 'Count'")
+  }
+  return(list(fit = fit, panel_genes = panel_genes, panel_lengths = panel_lengths))
 }
 
 pred_refit_range <- function(gen_model, lamda = exp(seq(-16, -24, length.out = 100))) {
 
 }
 
-pred_refit_size <- function(gen_model, size = 1, pred_range = NULL) {
-
+get_predictions <- function(pred_model, new_data) {
 
 }

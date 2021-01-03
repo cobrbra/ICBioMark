@@ -32,7 +32,7 @@ to be included in that iteration.
 Extract Panel Details from Group Lasso Fit
 }
 \examples{
-panels <- get_panels_from_fit(example_maf_data$gene_lengths, example_pred_fit$fit,
+panels <- get_panels_from_fit(example_maf_data$gene_lengths, example_first_pred_tmb$fit,
 example_gen_model$names$gene_list, mut_types_list = example_gen_model$names$mut_types_list)
 
 print(panels$fit)

@@ -72,7 +72,7 @@
 #'
 #' Produced using the function pred_first_fit().
 #'
-#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' @format A list with six entries:
 #' \describe{
 #'   \item{fit}{A gglasso fit.}
 #'   \item{panel_genes}{A matrix where each row corresponds to a gene, each column to an iteration of the group
@@ -84,5 +84,5 @@
 #'   \item{names}{Gene and mutation type information as used when fitting the generative model.}
 #'
 #' }
-"example_pred_fit"
+"example_first_pred_tmb"
 
