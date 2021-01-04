@@ -86,3 +86,16 @@
 #' }
 "example_first_pred_tmb"
 
+#' Refitted Predictive Model Fitted on Example Data
+#'
+#' Produced using the function pred_refit_panel().
+#'
+#' @format A list with six entries:
+#' \describe{
+#'   \item{fit}{A list with a single element 'beta', a matrix with prediction weights.}
+#'   \item{panel_genes}{A matrix (in this case with a single column) where each row corresponds to a gene,
+#'   and each entry corresponds to whether the gene is included in the panel.}
+#'   \item{panel_lengths}{A vector of length 1 giving total panel length.}
+#' }
+"example_refit_panel"
+

@@ -240,6 +240,37 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
   return(list(fit = fit, panel_genes = panels$panel_genes, panel_lengths = panels$panel_lengths, p = p$p, K = K, names = gen_model$names))
 }
 
+#' Refitted Predictive Model for a Given Panel
+#'
+#' @param pred_first (list)
+#' A first-fit predictive model as produced by pred_first_fit().
+#' @param gene_lengths (dataframe)
+#' A dataframe of gene lengths (see example_maf_data$gene_lengths for format).
+#' @param model (character)
+#' A choice of "T", "OLM" or "Count" specifying how predictions should be made.
+#' @param genes (character)
+#' A vector of gene names detailing the panel being used.
+#' @param biomarker (character)
+#' If "TMB" or "TIB", automatically defines marker_mut_types, otherwise this will
+#' need to be specified separately.
+#' @param marker_mut_types (character)
+#' A vector specifying which mutation types groups determine the biomarker in question.
+#' @param training_matrix (sparse matrix)
+#' Training matrix, as produced by get_mutation_tables() (select train, val or test).
+#' @param training_values (dataframe)
+#' Training true values, as produced by get_biomarker_tables() (select train, val or test).
+#'
+#' @return
+#' A list with three elements:
+#'  * fit, a list including a sparse matrix 'beta' giving prediction weights.
+#'  * panel_genes, a sparse (logical) matrix giving the genes included in prediction.
+#'  * panel_lengths, a singleton vector giving the length of the panel used.
+#' @export
+#'
+#' @examples
+#' example_refit_panel <- pred_refit_panel(pred_first = example_first_pred_tmb,
+#'   gene_lengths = example_maf_data$gene_lengths, genes = paste0("GENE_", 1:10))
+
 pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T", genes, biomarker = "TMB",
                              marker_mut_types = c("NS", "I"), training_matrix = NULL,
                              training_values = NULL) {
@@ -366,8 +397,8 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 }
 
 get_predictions <- function(pred_model, new_data) {
-  predictions <- pred_model$fit$beta %*% new_data$matrix
-  rownames(predictions) <- pred_model$names$sample_list
+  predictions <- as.matrix(new_data$matrix %*% pred_model$fit$beta)
+  rownames(predictions) <- new_data$sample_list
 
   return(list(predictions = predictions, panel_lengths = pred_model$panel_lengths))
 }
