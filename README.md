@@ -28,7 +28,7 @@ package) with:
 devtools::install_github("cobrbra/ICBioMark")
 ```
 
-## Example Workflow
+## Examples
 
 Upon installation we can load the package.
 
@@ -66,11 +66,11 @@ that you’ll always need to use this package, and they look as follows:
 
 | Tumor\_Sample\_Barcode | Hugo\_Symbol | Variant\_Classification |
 |:-----------------------|:-------------|:------------------------|
-| SAMPLE\_96             | GENE\_14     | Missense\_Mutation      |
-| SAMPLE\_73             | GENE\_14     | Frame\_Shift\_Ins       |
-| SAMPLE\_55             | GENE\_4      | Missense\_Mutation      |
-| SAMPLE\_96             | GENE\_3      | Missense\_Mutation      |
-| SAMPLE\_38             | GENE\_7      | Missense\_Mutation      |
+| SAMPLE\_53             | GENE\_5      | Missense\_Mutation      |
+| SAMPLE\_27             | GENE\_7      | Missense\_Mutation      |
+| SAMPLE\_73             | GENE\_11     | Silent                  |
+| SAMPLE\_47             | GENE\_18     | 3’Flank                 |
+| SAMPLE\_36             | GENE\_19     | Missense\_Mutation      |
 
 -   `gene_lengths`, another data frame, this time containing the names
     of genes that you’ll want to include in your modelling and their
@@ -193,6 +193,16 @@ of our model with `vis_model_fit()`.
   #                       table = example_tables$train)
 
   print(vis_model_fit(example_gen_model))
+#> Warning: Use of `fit_data$log_lambda` is discouraged. Use `log_lambda` instead.
+#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
+
+#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
+#> Warning: Use of `fit_data$sd` is discouraged. Use `sd` instead.
+#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
+#> Warning: Use of `fit_data$sd` is discouraged. Use `sd` instead.
+#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
+
+#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
 ```
 
 <img src="man/figures/README-example_gen_model-1.png" width="100%" />
@@ -206,6 +216,24 @@ redundant).
 
 ### Fitting the Predictive Model
 
+We now construct a first-fit predictive model. The parameter `lambda`
+controls the sparsity of each iteration, so it may take some
+experimentation to get a good range of panel lengths.
+
+``` r
+  example_first_pred_tmb <- pred_first_fit(example_gen_model, 
+    lambda = exp(seq(-9, -14, length.out = 100)), 
+    training_matrix = example_tables$train$matrix, 
+    gene_lengths = example_maf_data$gene_lengths)
+```
+
+From this we can construct a range of refit estimators:
+
+``` r
+  example_refit_range <- pred_refit_range(pred_first = example_first_pred_tmb, 
+    gene_lengths = example_maf_data$gene_lengths)
+```
+
 ### Making Predictions
 
 ### Analysing Performance
@@ -213,30 +241,5 @@ redundant).
 ## Getting Help
 
 Please do feel free to flag issues and requests on this repository. In
-dire need, you can try reaching me by
-[email](j.r.j.bradley@sms.ed.ac.uk), but I make no guarantees on speedy
-response via this route.
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub!
+dire need, you can try reaching me by [email](cobrbradley@gmail.com),
+but I make no guarantees on speedy response via this route.
