@@ -177,6 +177,16 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, accept
     gene_list <- unique(maf$Hugo_Symbol)
   }
 
+
+  if (!is.null(acceptable_genes)) {
+    wrong_genes <- setdiff(gene_list, acceptable_genes)
+    if (length(wrong_genes) > 0) {
+      warning(paste("Eliminating the following", length(wrong_genes), "genes not in the generative model: ", paste0(wrong_genes, collapse = ", ")))
+      gene_list <- intersect(gene_list, acceptable_genes)
+    }
+  }
+
+
   if (!is.null(acceptable_genes)) {
     gene_list <- intersect(gene_list, acceptable_genes)
   }

@@ -16,7 +16,8 @@ ensembl_gene_lengths <- biomaRt::getBM(attributes = c("chromosome_name", "cds_le
   dplyr::distinct() %>%
   dplyr::mutate(Hugo_Symbol = hgnc_symbol) %>%
   dplyr::mutate(Chromosome = chromosome_name) %>%
-  dplyr::select(Hugo_Symbol, max_cds, Chromosome)
+  dplyr::select(Hugo_Symbol, max_cds, Chromosome) %>%
+  as.data.frame()
 
 rownames(ensembl_gene_lengths) <- ensembl_gene_lengths$Hugo_Symbol
 
