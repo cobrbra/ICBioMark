@@ -367,4 +367,7 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 
 get_predictions <- function(pred_model, new_data) {
   predictions <- pred_model$fit$beta %*% new_data$matrix
+  rownames(predictions) <- pred_model$names$sample_list
+
+  return(list(predictions = predictions, panel_lengths = pred_model$panel_lengths))
 }
