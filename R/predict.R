@@ -381,6 +381,38 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
   return(list(fit = fit, panel_genes = panel_genes, panel_lengths = panel_lengths))
 }
 
+#' Get Refitted Predictive Models for a First-Fit Range of Panels
+#'
+#' Refit for each panel produced by a first-fit range.
+#'
+#' @param pred_first (list)
+#' A first-fit predictive model as produced by pred_first_fit().
+#' @param gene_lengths (dataframe)
+#' A dataframe of gene lengths (see example_maf_data$gene_lengths for format).
+#' @param model (character)
+#' A choice of "T", "OLM" or "Count" specifying how predictions should be made.
+#' @param biomarker (character)
+#' If "TMB" or "TIB", automatically defines marker_mut_types, otherwise this will
+#' need to be specified separately.
+#' @param marker_mut_types (character)
+#' A vector specifying which mutation types groups determine the biomarker in question.
+#' @param training_matrix (sparse matrix)
+#' Training matrix, as produced by get_mutation_tables() (select train, val or test).
+#' @param training_values (dataframe)
+#' Training true values, as produced by get_biomarker_tables() (select train, val or test).
+#'
+#' @return
+#'  A list with three elements:
+#'  * fit, a list including a sparse matrix 'beta' giving prediction weights for each
+#'  first-fit panel (one panel per column).
+#'  * panel_genes, a sparse (logical) matrix giving the genes included in prediction
+#'  for each first-fit panel.
+#'  * panel_lengths, a vector giving the length of each first-fit panel.
+#' @export
+#'
+#' @examples
+#' example_refit_range <- pred_refit_range(pred_first = example_first_pred_tmb,
+#'   gene_lengths = example_maf_data$gene_lengths)
 pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T", biomarker = "TMB",
                              marker_mut_types = c("NS", "I"), training_matrix = NULL, training_values = NULL) {
 

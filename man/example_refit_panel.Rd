@@ -5,7 +5,7 @@
 \alias{example_refit_panel}
 \title{Refitted Predictive Model Fitted on Example Data}
 \format{
-A list with six entries:
+A list with three entries:
 \describe{
 \item{fit}{A list with a single element 'beta', a matrix with prediction weights.}
 \item{panel_genes}{A matrix (in this case with a single column) where each row corresponds to a gene,
