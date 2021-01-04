@@ -301,6 +301,7 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
       stop("Need training matrix and values for OLM fitting.")
     }
     colnames(training_matrix) <- pred_first$names$col_names
+    rownames(training_matrix) <- training_values$Tumor_Sample_Barcode
     training_values <- training_values[pred_first$names$sample_list,]
     train <- as.data.frame(cbind(matrix(training_values[[biomarker]], n_samples, 1),
                    as.matrix(training_matrix[,cols_panel])))
@@ -334,11 +335,11 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
     t_s_getter <- NULL
 
     lengths_factor <- sum(gene_lengths[pred_first$names$gene_list, 'max_cds']) / sum(gene_lengths[genes, 'max_cds'])
-    mut_types_factor <- t_s[pred_first$names$mut_types_list %in% marker_mut_types] / sum(t_s)
+    mut_types_factor <- sum(t_s[pred_first$names$mut_types_list %in% marker_mut_types])/ sum(t_s)
 
     beta <- Matrix::Matrix(0, nrow = n_genes * n_mut_types, ncol = 1, sparse = TRUE)
     rownames(beta) <- pred_first$names$col_names
-    beta[cols_panel,] <- lengths_factor * mut_types_factor / length(genes)
+    beta[cols_panel,] <- lengths_factor * mut_types_factor
 
     fit <- list(beta = beta)
   }
@@ -349,10 +350,21 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
   return(list(fit = fit, panel_genes = panel_genes, panel_lengths = panel_lengths))
 }
 
-pred_refit_range <- function(gen_model, lamda = exp(seq(-16, -24, length.out = 100))) {
+pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T", biomarker = "TMB",
+                             marker_mut_types = c("NS", "I"), training_matrix = NULL, training_values = NULL) {
+
+    which_genes <- which(pred_first$panel_genes, arr.ind = TRUE)
+    genes <- purrr::map(1:ncol(pred_first$panel_genes), ~ rownames(which_genes[which_genes[, 'col'] == ., ]))
+
+    betas <- purrr::map(genes, ~ pred_refit_panel(genes = ., pred_first = pred_first, gene_lengths = gene_lengths, model = model,
+                                                  biomarker = biomarker, marker_mut_types = marker_mut_types,
+                                                  training_matrix = training_matrix, training_values = training_values)$fit$beta)
+
+    beta <- do.call(cbind, betas)
+  return(list(fit = list(beta = beta), panel_genes = pred_first$panel_genes, panel_lengths = pred_first$panel_lengths))
 
 }
 
 get_predictions <- function(pred_model, new_data) {
-
+  predictions <- pred_model$fit$beta %*% new_data$matrix
 }
