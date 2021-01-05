@@ -12,6 +12,9 @@ opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+library(magrittr)
+library(ggplot2)
 ```
 
 # ICBioMark
@@ -115,9 +118,18 @@ From this we can construct a range of refit estimators:
 ```
 
 
-### Making Predictions 
+### Making Predictions and Analysing Performance
+With a predictive model fitted, we can use the function `get_predictions()` along with a new (validation or test) dataset to produce predictions on that dataset. We then provide several functions including `get_stats()` to analyse the output compared to true values.
 
-### Analysing Performance
+```{r example_predictions}
+
+  example_refit_range %>% 
+     get_predictions(new_data = example_tables$val) %>% 
+     get_stats(biomarker_values = example_tmb_tables$val, model = "T", threshold = 10) %>% 
+     ggplot(aes(x = panel_length, y = stat)) + geom_line() + facet_wrap(~metric) + theme_minimal() + labs(x = "Panel Length", y = "Predictive Performance")
+
+```
+
 
 ## Getting Help
 Please do feel free to flag issues and requests on this repository. In dire need, you can try reaching me by [email](cobrbradley@gmail.com), but I make no guarantees on speedy response via this route.

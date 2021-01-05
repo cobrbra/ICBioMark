@@ -66,11 +66,11 @@ that you’ll always need to use this package, and they look as follows:
 
 | Tumor\_Sample\_Barcode | Hugo\_Symbol | Variant\_Classification |
 |:-----------------------|:-------------|:------------------------|
-| SAMPLE\_53             | GENE\_5      | Missense\_Mutation      |
-| SAMPLE\_27             | GENE\_7      | Missense\_Mutation      |
-| SAMPLE\_73             | GENE\_11     | Silent                  |
-| SAMPLE\_47             | GENE\_18     | 3’Flank                 |
-| SAMPLE\_36             | GENE\_19     | Missense\_Mutation      |
+| SAMPLE\_96             | GENE\_14     | Missense\_Mutation      |
+| SAMPLE\_73             | GENE\_14     | Frame\_Shift\_Ins       |
+| SAMPLE\_55             | GENE\_4      | Missense\_Mutation      |
+| SAMPLE\_96             | GENE\_3      | Missense\_Mutation      |
+| SAMPLE\_38             | GENE\_7      | Missense\_Mutation      |
 
 -   `gene_lengths`, another data frame, this time containing the names
     of genes that you’ll want to include in your modelling and their
@@ -193,16 +193,6 @@ of our model with `vis_model_fit()`.
   #                       table = example_tables$train)
 
   print(vis_model_fit(example_gen_model))
-#> Warning: Use of `fit_data$log_lambda` is discouraged. Use `log_lambda` instead.
-#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
-
-#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
-#> Warning: Use of `fit_data$sd` is discouraged. Use `sd` instead.
-#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
-#> Warning: Use of `fit_data$sd` is discouraged. Use `sd` instead.
-#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
-
-#> Warning: Use of `fit_data$Deviance` is discouraged. Use `Deviance` instead.
 ```
 
 <img src="man/figures/README-example_gen_model-1.png" width="100%" />
@@ -234,9 +224,21 @@ From this we can construct a range of refit estimators:
     gene_lengths = example_maf_data$gene_lengths)
 ```
 
-### Making Predictions
+### Making Predictions and Analysing Performance
 
-### Analysing Performance
+With a predictive model fitted, we can use the function
+`get_predictions()` along with a new (validation or test) dataset to
+produce predictions on that dataset. We then provide several functions
+including `get_stats()` to analyse the output compared to true values.
+
+``` r
+  example_refit_range %>% 
+     get_predictions(new_data = example_tables$val) %>% 
+     get_stats(biomarker_values = example_tmb_tables$val, model = "T", threshold = 10) %>% 
+     ggplot(aes(x = panel_length, y = stat)) + geom_line() + facet_wrap(~metric) + theme_minimal() + labs(x = "Panel Length", y = "Predictive Performance")
+```
+
+<img src="man/figures/README-example_predictions-1.png" width="100%" />
 
 ## Getting Help
 

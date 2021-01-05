@@ -428,6 +428,27 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 
 }
 
+#' Produce Predictions on an Unseen Dataset
+#'
+#' @param pred_model (list)
+#' A predictive model as fitted by pred_first_fit(), pred_refit_panel() or
+#' pred_refit_range().
+#' @param new_data (list)
+#' A new dataset, containing a matrix of observations and a list of sample IDs.
+#' Likely comes from the 'train', 'val' or 'test' argument of a call to
+#' get_mutation_tables().
+#'
+#' @return
+#' A list with two elements:
+#' * predictions, a matrix containing a row for each sample and a column for each
+#' panel.
+#' * panel_lengths, a vector containing the length of each panel.
+#' @export
+#'
+#' @examples
+#' example_pred <- get_predictions(example_refit_range, new_data =
+#' example_tables$val)
+
 get_predictions <- function(pred_model, new_data) {
   predictions <- as.matrix(new_data$matrix %*% pred_model$fit$beta)
   rownames(predictions) <- new_data$sample_list
