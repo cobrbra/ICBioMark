@@ -15,6 +15,14 @@ pred_refit_range().}
 A new dataset, containing a matrix of observations and a list of sample IDs.
 Likely comes from the 'train', 'val' or 'test' argument of a call to
 get_mutation_tables().}
+
+\item{s}{(numeric)
+If producing predictions for a single panel, s chooses which panel
+(column in a pred_fit object) to produce predictions for.}
+
+\item{max_panel_length}{(numeric)
+If producing predictions for a single panel, maximum panel length to
+specify that panel.}
 }
 \value{
 A list with two elements:

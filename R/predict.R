@@ -439,6 +439,12 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' A new dataset, containing a matrix of observations and a list of sample IDs.
 #' Likely comes from the 'train', 'val' or 'test' argument of a call to
 #' get_mutation_tables().
+#' @param s (numeric)
+#' If producing predictions for a single panel, s chooses which panel
+#' (column in a pred_fit object) to produce predictions for.
+#' @param max_panel_length (numeric)
+#' If producing predictions for a single panel, maximum panel length to
+#' specify that panel.
 #'
 #' @return
 #' A list with two elements:
