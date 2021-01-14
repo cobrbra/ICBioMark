@@ -212,16 +212,17 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
   n_genes <- length(gen_model$names$gene_list)
   n_mut_types <- length(gen_model$names$mut_types_list)
 
+  message("Getting p")
   p <- get_p(gen_model = gen_model, training_matrix = training_matrix, marker_mut_types = marker_mut_types,
              gene_lengths = gene_lengths)
-
+  message("Getting K")
   K <- get_K(gen_model = gen_model, p_norm = p$p_norm, training_matrix = training_matrix,
              marker_training_values = marker_training_values, method = K_method)
 
   rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
   gene_lengths[free_genes,'max_cds'] <- 0
   pf <- gene_lengths[gen_model$names$gene_list,]$max_cds
-
+  message("Making matrix")
   X <- matrix(0, n_mut_types * n_genes + 1, n_mut_types * n_genes)
   colnames(X)
 
@@ -230,6 +231,7 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
   Y <- c(sqrt(K), sqrt(p$p))
   Y[setdiff(2:(n_mut_types * n_genes + 1), 1 + p$bs)] <- 0
 
+  message("Fitting")
   fit <- gglasso::gglasso(x = X, y = Y, loss = "ls", lambda = lambda,
                           group = rep(1:n_genes, each = n_mut_types), intercept = FALSE, pf = pf)
   rownames(fit$beta) <- gen_model$names$col_names
@@ -449,9 +451,69 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' example_pred <- get_predictions(example_refit_range, new_data =
 #' example_tables$val)
 
-get_predictions <- function(pred_model, new_data) {
+get_predictions <- function(pred_model, new_data,
+                            s = NULL, max_panel_length = NULL) {
   predictions <- as.matrix(new_data$matrix %*% pred_model$fit$beta)
   rownames(predictions) <- new_data$sample_list
-
+  if (!is.null(max_panel_length)) {
+    s = max(pred_model$panel_lengths[pred_model$panel_lengths <= max_panel_length])
+  }
+  if (!is.null(s)) {
+    predictions <- predictions[, s, drop = FALSE]
+  }
   return(list(predictions = predictions, panel_lengths = pred_model$panel_lengths))
+}
+
+pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, gene_lengths,
+                           alpha = 0.1, pred_range = seq(0, 1.1, 100), s = NULL, max_panel_length = NULL,
+                           biomarker = "TMB", marker_mut_types = c("NS", "I")) {
+  if (!is.null(max_panel_length)) {
+    s = max(predictions$panel_lengths[predictions$panel_lengths <= max_panel_length])
+  }
+
+  if (!is.null(s)) {
+    predictions$predictions <- predictions$predictions[, s, drop = FALSE]
+  }
+
+  else if (ncol(predictions$predictions > 1)) {
+    stop("Either provide a predictions matrix with one column, or select which column
+         should be used with s or max_panel_length.")
+  }
+
+  if (ncol(pred_fit$fit$beta) > 1) {
+    warning("Using the first column of predictive model fit")
+    s <- 1
+  }
+
+  if (biomarker == "TIB") {
+    marker_mut_types = c("I")
+  }
+
+  rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
+
+  n_samples <- nrow(training_matrix)
+  n_genes <- length(gen_model$names$gene_list)
+  n_mut_types <- length(gen_model$names$mut_types_list)
+
+  t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
+                                     j = 1:(n_samples*n_genes*n_mut_types),
+                                     dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
+  t_s <- as.vector(t_s_getter %*% mutation_vector)
+  t_s_getter <- NULL
+
+  param_getter <- Matrix::sparseMatrix(c(i, i), c(j, j_))
+  param_est <- as.vector(param_getter %*% gen_model$fit$beta[, gen_model$s_min])
+  names(param_est) <- gen_model$names$col_names
+  param_getter <- NULL
+
+  exp_g_s <- exp(param_est)*rep(gene_lengths[gen_model$names$gene_list, 'max_cds'], each = n_mut_types)*rep(t_s, n_genes)
+  exp_mu <- Matrix::rowSums(training_matrix) / (exp(gen_model$fit$a0[s_min]) * sum(exp_g_s))
+
+  biomarker_ids <- purrr::map(marker_mut_types, ~which(gen_model$names$mut_types_list == .))
+  biomarker_columns <- sort(unlist(purrr::map(biomarker_ids, ~seq(., n_genes*n_mut_types, n_mut_types))))
+
+  bias <- (sum(exp_g_s[biomarker_columns]) - sum(exp_g_s*as.vector(pred_model$fit$beta[,s])))^2
+  var <- sum(exp_g_s[biomarker_columns]*(1 - as.vector(pred_model$fit$beta[,s])[biomarker_columns])^2) +
+    sum(exp_g_s[-biomarker_columns]*as.vector(pred_model$fit$beta[,s])[-biomarker_columns]^2)
+  norm <- sum(exp_g_s*as.vector(pred_model$fit$beta[,s]))
 }
