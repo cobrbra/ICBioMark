@@ -4,7 +4,7 @@
 \alias{get_predictions}
 \title{Produce Predictions on an Unseen Dataset}
 \usage{
-get_predictions(pred_model, new_data)
+get_predictions(pred_model, new_data, s = NULL, max_panel_length = NULL)
 }
 \arguments{
 \item{pred_model}{(list)
