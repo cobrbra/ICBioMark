@@ -470,30 +470,85 @@ get_predictions <- function(pred_model, new_data,
   return(list(predictions = predictions, panel_lengths = pred_model$panel_lengths))
 }
 
+#' Produce Error Bounds for Predictions
+#'
+#' @param predictions (list)
+#' A predictions object, as produced by get_predictions().
+#' @param pred_model (list)
+#' A predictive model, as produced by pred_first_fit(), pred_refit_panel() or
+#' pred_refit_range().
+#' @param gen_model (list)
+#' A generative model, as produce by fit_gen_model
+#' @param training_matrix (sparse matrix)
+#' A training matrix, as produced by get_tables()$matrix or get_table_from_maf()$matrix.
+#' @param gene_lengths (data frame)
+#' A data frame with columns 'Hugo_Symbol' and 'max_cds'. See example_maf_data$gene_lengths, or
+#' ensembl_gene_lengths for examples.
+#' @param biomarker_values (data frame)
+#' A data frame containing the true values of the biomarker in question.
+#' @param alpha (numeric)
+#' Confidence level for error bounds.
+#' @param range_factor (numeric)
+#' Value specifying how far beyond the range of max(biomarker) to plot confidence region.
+#' @param s (numeric)
+#' If input predictions are for a range of panels, s chooses which panel
+#' (column in a pred_fit object) to produce predictions for.
+#' @param max_panel_length (numeric)
+#' Select panel by maximum length.
+#' @param biomarker (character)
+#' Which biomarker is being predicted.
+#' @param marker_mut_types (character)
+#' If biomarker is not one of "TMB" or "TIB", then this is required to specify which mutation type
+#' groups constitute the biomarker.
+#'
+#' @return
+#' A list with two entries:
+#'  * prediction_intervals:
+#'  * confidence_region:
+#' @export
+#'
+#' @examples
+#' example_intervals <- pred_intervals(predictions = get_predictions(example_refit_range,
+#'                new_data = example_tables$val),
+#'                pred_model = example_refit_range, biomarker_values = example_tmb_tables$val,
+#'                gen_model = example_gen_model, training_matrix = example_tables$train$matrix,
+#'                max_panel_length = 15000, gene_lengths = example_maf_data$gene_lengths)
+#'
+#' example_confidence_plot <- ggplot() +
+#'   geom_point(data = example_intervals$prediction_intervals,
+#'              aes(x = true_value, y = estimated_value)) +
+#'         geom_ribbon(data = .$confidence_region, aes(x = x, ymin = y_lower, ymax = y_upper),
+#'                     fill = "red", alpha = 0.2) +
+#'         geom_line(data = .$confidence_region, aes(x = x, y = y), linetype = 2) +
+#'         scale_x_log10() + scale_y_log10()}
+#'
+#' plot(example_confidence_plot)
+
 pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, gene_lengths,
-                           alpha = 0.1, pred_range = seq(0, 1.1, 100), s = NULL, max_panel_length = NULL,
+                           biomarker_values, alpha = 0.1, range_factor = 1.1, s = NULL, max_panel_length = NULL,
                            biomarker = "TMB", marker_mut_types = c("NS", "I")) {
   if (!is.null(max_panel_length)) {
-    s = max(predictions$panel_lengths[predictions$panel_lengths <= max_panel_length])
+    s = max(which(predictions$panel_lengths <= max_panel_length))
   }
-
   if (!is.null(s)) {
     predictions$predictions <- predictions$predictions[, s, drop = FALSE]
   }
+
 
   else if (ncol(predictions$predictions > 1)) {
     stop("Either provide a predictions matrix with one column, or select which column
          should be used with s or max_panel_length.")
   }
 
-  if (ncol(pred_fit$fit$beta) > 1) {
-    warning("Using the first column of predictive model fit")
-    s <- 1
+  if (ncol(pred_model$fit$beta) > 1) {
+    warning(paste0("Using column ",  s, " of predictive model fit"))
   }
 
   if (biomarker == "TIB") {
     marker_mut_types = c("I")
   }
+
+  pred_range <- seq(min(biomarker_values[[biomarker]]) , range_factor * max(biomarker_values[[biomarker]]))
 
   rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
 
@@ -501,11 +556,18 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
   n_genes <- length(gen_model$names$gene_list)
   n_mut_types <- length(gen_model$names$mut_types_list)
 
+  mutation_vector <- training_matrix
+  dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+
   t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
                                      j = 1:(n_samples*n_genes*n_mut_types),
                                      dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
   t_s <- as.vector(t_s_getter %*% mutation_vector)
   t_s_getter <- NULL
+
+  i <- 1:(n_genes*n_mut_types)
+  j <- rep(1:(n_genes*n_mut_types))
+  j_ <- rep(seq(1, n_genes*n_mut_types, n_mut_types), each = n_mut_types)
 
   param_getter <- Matrix::sparseMatrix(c(i, i), c(j, j_))
   param_est <- as.vector(param_getter %*% gen_model$fit$beta[, gen_model$s_min])
@@ -513,7 +575,7 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
   param_getter <- NULL
 
   exp_g_s <- exp(param_est)*rep(gene_lengths[gen_model$names$gene_list, 'max_cds'], each = n_mut_types)*rep(t_s, n_genes)
-  exp_mu <- Matrix::rowSums(training_matrix) / (exp(gen_model$fit$a0[s_min]) * sum(exp_g_s))
+  exp_mu <- Matrix::rowSums(training_matrix) / (exp(gen_model$fit$a0[gen_model$s_min]) * sum(exp_g_s))
 
   biomarker_ids <- purrr::map(marker_mut_types, ~which(gen_model$names$mut_types_list == .))
   biomarker_columns <- sort(unlist(purrr::map(biomarker_ids, ~seq(., n_genes*n_mut_types, n_mut_types))))
@@ -522,4 +584,25 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
   var <- sum(exp_g_s[biomarker_columns]*(1 - as.vector(pred_model$fit$beta[,s])[biomarker_columns])^2) +
     sum(exp_g_s[-biomarker_columns]*as.vector(pred_model$fit$beta[,s])[-biomarker_columns]^2)
   norm <- sum(exp_g_s*as.vector(pred_model$fit$beta[,s]))
+
+  prediction_intervals <- data.frame(Tumor_Sample_Barcode = biomarker_values$Tumor_Sample_Barcode,
+                                 true_value = biomarker_values[[biomarker]],
+                                 estimated_value = predictions$predictions[biomarker_values$Tumor_Sample_Barcode, ])
+  prediction_intervals$upper <-  (2*prediction_intervals$true_value + var/(alpha*norm) +
+                                    sqrt((2*prediction_intervals$true_value + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*prediction_intervals$true_value^2)) /
+                                    (2*(1 - bias / (alpha*norm^2)))
+  prediction_intervals$lower <- (2*prediction_intervals$true_value + var/(alpha*norm) -
+                                   sqrt((2*prediction_intervals$true_value + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*prediction_intervals$true_value^2)) /
+                                   (2*(1 - bias / (alpha*norm^2)))
+
+
+  confidence_region <- data.frame(x = pred_range, y = pred_range,
+                              y_lower = (2*pred_range + var/(alpha*norm) -
+                                           sqrt((2*pred_range + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*pred_range^2)) /
+                                           (2*(1- bias / (alpha*norm^2))),
+                              y_upper = (2*pred_range + var/(alpha*norm) +
+                                           sqrt((2*pred_range + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*pred_range^2)) /
+                                           (2*(1- bias / (alpha*norm^2))))
+
+  return(list(prediction_intervals = prediction_intervals, confidence_region = confidence_region))
 }
