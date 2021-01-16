@@ -275,7 +275,7 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
 
 pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T", genes, biomarker = "TMB",
                              marker_mut_types = c("NS", "I"), training_matrix = NULL,
-                             training_values = NULL) {
+                             training_values = NULL, mutation_vector = NULL, t_s = NULL) {
   n_genes <- length(pred_first$names$gene_list)
   n_mut_types <- length(pred_first$names$mut_types_list)
 
@@ -357,15 +357,20 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
     n_genes <- length(pred_first$names$gene_list)
     n_mut_types <- length(pred_first$names$mut_types_list)
 
-    mutation_vector <- training_matrix
-    dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
     rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
 
-    t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
-                                       j = 1:(n_samples*n_genes*n_mut_types),
-                                       dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
-    t_s <- as.vector(t_s_getter %*% mutation_vector)
-    t_s_getter <- NULL
+    if (is.null(mutation_vector)) {
+      mutation_vector <- training_matrix
+      dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+    }
+
+    if (is.null(t_s)) {
+      t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
+                                         j = 1:(n_samples*n_genes*n_mut_types),
+                                         dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
+      t_s <- as.vector(t_s_getter %*% mutation_vector)
+      t_s_getter <- NULL
+    }
 
     lengths_factor <- sum(gene_lengths[pred_first$names$gene_list, 'max_cds']) / sum(gene_lengths[genes, 'max_cds'])
     mut_types_factor <- sum(t_s[pred_first$names$mut_types_list %in% marker_mut_types])/ sum(t_s)
@@ -416,14 +421,35 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' example_refit_range <- pred_refit_range(pred_first = example_first_pred_tmb,
 #'   gene_lengths = example_maf_data$gene_lengths)
 pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T", biomarker = "TMB",
-                             marker_mut_types = c("NS", "I"), training_matrix = NULL, training_values = NULL) {
+                             marker_mut_types = c("NS", "I"), training_matrix = NULL, training_values = NULL,
+                             mutation_values = NULL, t_s = NULL) {
 
+    if (model == "Count") {
+
+      n_samples <- nrow(training_matrix)
+      n_genes <- length(pred_first$names$gene_list)
+      n_mut_types <- length(pred_first$names$mut_types_list)
+      if (is.null(training_matrix) | is.null(training_values)) {
+        stop("Need training matrix and values for Count fitting.")
+      }
+      mutation_vector <- training_matrix
+      dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+
+      if (is.null(t_s)) {
+        t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
+                                           j = 1:(n_samples*n_genes*n_mut_types),
+                                           dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
+        t_s <- as.vector(t_s_getter %*% mutation_vector)
+        t_s_getter <- NULL
+      }
+    }
     which_genes <- which(pred_first$panel_genes, arr.ind = TRUE)
     genes <- purrr::map(1:ncol(pred_first$panel_genes), ~ rownames(which_genes[which_genes[, 'col'] == ., ]))
 
     betas <- purrr::map(genes, ~ pred_refit_panel(genes = ., pred_first = pred_first, gene_lengths = gene_lengths, model = model,
                                                   biomarker = biomarker, marker_mut_types = marker_mut_types,
-                                                  training_matrix = training_matrix, training_values = training_values)$fit$beta)
+                                                  training_matrix = training_matrix, training_values = training_values,
+                                                  mutation_vector = mutation_vector, t_s = t_s)$fit$beta)
 
     beta <- do.call(cbind, betas)
   return(list(fit = list(beta = beta), panel_genes = pred_first$panel_genes, panel_lengths = pred_first$panel_lengths))
@@ -461,8 +487,9 @@ get_predictions <- function(pred_model, new_data,
                             s = NULL, max_panel_length = NULL) {
   predictions <- as.matrix(new_data$matrix %*% pred_model$fit$beta)
   rownames(predictions) <- new_data$sample_list
+
   if (!is.null(max_panel_length)) {
-    s = max(pred_model$panel_lengths[pred_model$panel_lengths <= max_panel_length])
+    s = max(which(pred_model$panel_lengths <= max_panel_length))
   }
   if (!is.null(s)) {
     predictions <- predictions[, s, drop = FALSE]
@@ -526,7 +553,8 @@ get_predictions <- function(pred_model, new_data,
 
 pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, gene_lengths,
                            biomarker_values, alpha = 0.1, range_factor = 1.1, s = NULL, max_panel_length = NULL,
-                           biomarker = "TMB", marker_mut_types = c("NS", "I")) {
+                           biomarker = "TMB", marker_mut_types = c("NS", "I"),
+                           model = "Refitted T") {
   if (!is.null(max_panel_length)) {
     s = max(which(predictions$panel_lengths <= max_panel_length))
   }
@@ -587,7 +615,8 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
 
   prediction_intervals <- data.frame(Tumor_Sample_Barcode = biomarker_values$Tumor_Sample_Barcode,
                                  true_value = biomarker_values[[biomarker]],
-                                 estimated_value = predictions$predictions[biomarker_values$Tumor_Sample_Barcode, ])
+                                 estimated_value = predictions$predictions[biomarker_values$Tumor_Sample_Barcode, ],
+                                 model = model)
   prediction_intervals$upper <-  (2*prediction_intervals$true_value + var/(alpha*norm) +
                                     sqrt((2*prediction_intervals$true_value + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*prediction_intervals$true_value^2)) /
                                     (2*(1 - bias / (alpha*norm^2)))
@@ -602,7 +631,8 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
                                            (2*(1- bias / (alpha*norm^2))),
                               y_upper = (2*pred_range + var/(alpha*norm) +
                                            sqrt((2*pred_range + var/(alpha*norm))^2 - 4*(1- bias/(alpha*norm^2))*pred_range^2)) /
-                                           (2*(1- bias / (alpha*norm^2))))
+                                           (2*(1- bias / (alpha*norm^2))),
+                              model = model)
 
   return(list(prediction_intervals = prediction_intervals, confidence_region = confidence_region))
 }
