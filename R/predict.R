@@ -257,10 +257,15 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
 #' need to be specified separately.
 #' @param marker_mut_types (character)
 #' A vector specifying which mutation types groups determine the biomarker in question.
-#' @param training_matrix (sparse matrix)
-#' Training matrix, as produced by get_mutation_tables() (select train, val or test).
+#' @param training_data (list)
+#' Training data, as produced by get_mutation_tables() (select train, val or test).
 #' @param training_values (dataframe)
 #' Training true values, as produced by get_biomarker_tables() (select train, val or test).
+#' @param mutation_vector (numeric)
+#' Optional vector specifying the values of the training matrix (training_data$matrix) in
+#' vector rather than matrix form.
+#' @param t_s (numeric)
+#' Optional vector specifying the frequencies of different mutation types.
 #'
 #' @return
 #' A list with three elements:
@@ -274,10 +279,17 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
 #'   gene_lengths = example_maf_data$gene_lengths, genes = paste0("GENE_", 1:10))
 
 pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T", genes, biomarker = "TMB",
-                             marker_mut_types = c("NS", "I"), training_matrix = NULL,
+                             marker_mut_types = c("NS", "I"), training_data = NULL,
                              training_values = NULL, mutation_vector = NULL, t_s = NULL) {
   n_genes <- length(pred_first$names$gene_list)
-  n_mut_types <- length(pred_first$names$mut_types_list)
+
+  if (!is.null(training_data)) {
+    n_mut_types <- length(training_data$mut_types)
+  }
+
+  else {
+    n_mut_types <- length(pred_first$names$mut_types_list)
+  }
 
   wrong_genes_model <- setdiff(genes, pred_first$names$gene_list)
   if (length(wrong_genes_model) > 0) {
@@ -301,7 +313,14 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
   else {
     panel_lengths <- c(0)
   }
-  cols_panel <- paste0(rep(genes, each = n_mut_types), "_", pred_first$names$mut_types_list)
+
+  if (!is.null(training_data)) {
+    cols_panel <- paste0(rep(genes, each = n_mut_types), "_", training_data$mut_types_list)
+  }
+  else{
+    cols_panel <- paste0(rep(genes, each = n_mut_types), "_", pred_first$names$mut_types_list)
+  }
+
   panel_genes <- Matrix::Matrix(pred_first$names$col_names %in% cols_panel,
                                 nrow = n_genes * n_mut_types, ncol = 1,
                                 sparse = TRUE)
@@ -329,38 +348,38 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
     }
   }
   else if (model == "OLM") {
-    n_samples <- nrow(training_matrix)
-    if (is.null(training_matrix) | is.null(training_values)) {
+    n_samples <- nrow(training_data$matrix)
+    if (is.null(training_data) | is.null(training_values)) {
       stop("Need training matrix and values for OLM fitting.")
     }
-    colnames(training_matrix) <- pred_first$names$col_names
-    rownames(training_matrix) <- training_values$Tumor_Sample_Barcode
+    colnames(training_data$matrix) <- training_data$col_names
+    rownames(training_data$matrix) <- training_values$Tumor_Sample_Barcode
     training_values <- training_values[pred_first$names$sample_list,]
     train <- as.data.frame(cbind(matrix(training_values[[biomarker]], n_samples, 1),
-                   as.matrix(training_matrix[,cols_panel])))
+                   as.matrix(training_data$matrix[,cols_panel])))
     colnames(train) <- c(biomarker, cols_panel)
     formula <- stats::as.formula(paste(biomarker, "~ . - 1"))
     fit <- stats::lm(formula = formula, data = train)
 
     fit$beta <- Matrix::Matrix(0, n_genes * n_mut_types, sparse = TRUE)
-    rownames(fit$beta) <- pred_first$names$col_names
+    rownames(fit$beta) <- training_data$col_names
     fit$beta[cols_panel,] <- fit$coefficients
     fit$beta[is.na(fit$beta)] <- 0
 
   }
   else if (model == "Count") {
-    if (is.null(training_matrix) | is.null(training_values)) {
+    if (is.null(training_data) | is.null(training_values)) {
       stop("Need training matrix and values for Count fitting.")
     }
 
-    n_samples <- nrow(training_matrix)
+    n_samples <- nrow(training_data$matrix)
     n_genes <- length(pred_first$names$gene_list)
-    n_mut_types <- length(pred_first$names$mut_types_list)
+    n_mut_types <- length(training_data$mut_types_list)
 
     rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
 
     if (is.null(mutation_vector)) {
-      mutation_vector <- training_matrix
+      mutation_vector <- training_data$matrix
       dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
     }
 
@@ -403,10 +422,18 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' need to be specified separately.
 #' @param marker_mut_types (character)
 #' A vector specifying which mutation types groups determine the biomarker in question.
-#' @param training_matrix (sparse matrix)
+#' @param training_data (sparse matrix)
 #' Training matrix, as produced by get_mutation_tables() (select train, val or test).
 #' @param training_values (dataframe)
 #' Training true values, as produced by get_biomarker_tables() (select train, val or test).
+#' @param mutation_vector (numeric)
+#' Optional vector specifying the values of the training matrix (training_data$matrix) in
+#' vector rather than matrix form.
+#' @param t_s (numeric)
+#' Optional vector specifying the frequencies of different mutation types.
+#' @param max_panel_length (numeric)
+#' Upper bound for panels to fit refitted models to. Most useful for "OLM" and "Count"
+#' model types.
 #'
 #' @return
 #'  A list with three elements:
@@ -421,19 +448,22 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' example_refit_range <- pred_refit_range(pred_first = example_first_pred_tmb,
 #'   gene_lengths = example_maf_data$gene_lengths)
 pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T", biomarker = "TMB",
-                             marker_mut_types = c("NS", "I"), training_matrix = NULL, training_values = NULL,
-                             mutation_values = NULL, t_s = NULL) {
+                             marker_mut_types = c("NS", "I"), training_data = NULL, training_values = NULL,
+                             mutation_vector = NULL, t_s = NULL, max_panel_length = NULL) {
 
     if (model == "Count") {
 
-      n_samples <- nrow(training_matrix)
-      n_genes <- length(pred_first$names$gene_list)
-      n_mut_types <- length(pred_first$names$mut_types_list)
-      if (is.null(training_matrix) | is.null(training_values)) {
+      if (is.null(training_data) | is.null(training_values)) {
         stop("Need training matrix and values for Count fitting.")
       }
-      mutation_vector <- training_matrix
-      dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+      n_mut_types <- length(training_data$mut_types_list)
+      n_samples <- nrow(training_data$matrix)
+      n_genes <- length(training_data$gene_list)
+
+      if (is.null(mutation_vector)) {
+        mutation_vector <- training_data$matrix
+        dim(mutation_vector) <- c(n_samples*n_genes*n_mut_types, 1)
+      }
 
       if (is.null(t_s)) {
         t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples),
@@ -446,9 +476,16 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
     which_genes <- which(pred_first$panel_genes, arr.ind = TRUE)
     genes <- purrr::map(1:ncol(pred_first$panel_genes), ~ rownames(which_genes[which_genes[, 'col'] == ., ]))
 
+    if (!is.null(max_panel_length)) {
+      s <- max(which(pred_first$panel_lengths <= max_panel_length))
+      genes <- genes[1:s]
+      pred_first$panel_genes <- pred_first$panel_genes[,1:s, drop = FALSE]
+      pred_first$panel_lengths <- pred_first$panel_lengths[1:s]
+    }
+
     betas <- purrr::map(genes, ~ pred_refit_panel(genes = ., pred_first = pred_first, gene_lengths = gene_lengths, model = model,
                                                   biomarker = biomarker, marker_mut_types = marker_mut_types,
-                                                  training_matrix = training_matrix, training_values = training_values,
+                                                  training_data = training_data, training_values = training_values,
                                                   mutation_vector = mutation_vector, t_s = t_s)$fit$beta)
 
     beta <- do.call(cbind, betas)
@@ -527,6 +564,8 @@ get_predictions <- function(pred_model, new_data,
 #' @param marker_mut_types (character)
 #' If biomarker is not one of "TMB" or "TIB", then this is required to specify which mutation type
 #' groups constitute the biomarker.
+#' @param model (character)
+#' The model (must be based on a linear estimator) for which prediction intervals are being generated.
 #'
 #' @return
 #' A list with two entries:
@@ -576,7 +615,7 @@ pred_intervals <- function(predictions, pred_model, gen_model, training_matrix, 
     marker_mut_types = c("I")
   }
 
-  pred_range <- seq(min(biomarker_values[[biomarker]]) , range_factor * max(biomarker_values[[biomarker]]))
+  pred_range <- seq(min(biomarker_values[[biomarker]]) , range_factor * max(biomarker_values[[biomarker]]), length.out = 100)
 
   rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
 

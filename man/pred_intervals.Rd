@@ -16,7 +16,8 @@ pred_intervals(
   s = NULL,
   max_panel_length = NULL,
   biomarker = "TMB",
-  marker_mut_types = c("NS", "I")
+  marker_mut_types = c("NS", "I"),
+  model = "Refitted T"
 )
 }
 \arguments{
@@ -59,6 +60,9 @@ Which biomarker is being predicted.}
 \item{marker_mut_types}{(character)
 If biomarker is not one of "TMB" or "TIB", then this is required to specify which mutation type
 groups constitute the biomarker.}
+
+\item{model}{(character)
+The model (must be based on a linear estimator) for which prediction intervals are being generated.}
 }
 \value{
 A list with two entries:

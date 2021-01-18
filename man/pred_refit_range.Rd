@@ -10,8 +10,11 @@ pred_refit_range(
   model = "T",
   biomarker = "TMB",
   marker_mut_types = c("NS", "I"),
-  training_matrix = NULL,
-  training_values = NULL
+  training_data = NULL,
+  training_values = NULL,
+  mutation_vector = NULL,
+  t_s = NULL,
+  max_panel_length = NULL
 )
 }
 \arguments{
@@ -31,11 +34,22 @@ need to be specified separately.}
 \item{marker_mut_types}{(character)
 A vector specifying which mutation types groups determine the biomarker in question.}
 
-\item{training_matrix}{(sparse matrix)
+\item{training_data}{(sparse matrix)
 Training matrix, as produced by get_mutation_tables() (select train, val or test).}
 
 \item{training_values}{(dataframe)
 Training true values, as produced by get_biomarker_tables() (select train, val or test).}
+
+\item{mutation_vector}{(numeric)
+Optional vector specifying the values of the training matrix (training_data$matrix) in
+vector rather than matrix form.}
+
+\item{t_s}{(numeric)
+Optional vector specifying the frequencies of different mutation types.}
+
+\item{max_panel_length}{(numeric)
+Upper bound for panels to fit refitted models to. Most useful for "OLM" and "Count"
+model types.}
 }
 \value{
 A list with three elements:
