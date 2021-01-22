@@ -220,7 +220,7 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
              marker_training_values = marker_training_values, method = K_method)
 
   rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
-  gene_lengths[free_genes,'max_cds'] <- 0
+  gene_lengths[intersect(free_genes, gene_lengths$Hugo_Symbol),'max_cds'] <- 0
   pf <- gene_lengths[gen_model$names$gene_list,]$max_cds
   message("Making matrix")
   X <- matrix(0, n_mut_types * n_genes + 1, n_mut_types * n_genes)
@@ -395,7 +395,7 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
     mut_types_factor <- sum(t_s[pred_first$names$mut_types_list %in% marker_mut_types])/ sum(t_s)
 
     beta <- Matrix::Matrix(0, nrow = n_genes * n_mut_types, ncol = 1, sparse = TRUE)
-    rownames(beta) <- pred_first$names$col_names
+    rownames(beta) <- training_data$col_names
     beta[cols_panel,] <- lengths_factor * mut_types_factor
 
     fit <- list(beta = beta)
