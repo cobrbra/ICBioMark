@@ -220,8 +220,9 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
              marker_training_values = marker_training_values, method = K_method)
 
   rownames(gene_lengths) <- gene_lengths$Hugo_Symbol
-  gene_lengths[intersect(free_genes, gene_lengths$Hugo_Symbol),'max_cds'] <- 0
-  pf <- gene_lengths[gen_model$names$gene_list,]$max_cds
+  reduced_gene_lengths <- gene_lengths
+  reduced_gene_lengths[intersect(free_genes, gene_lengths$Hugo_Symbol),'max_cds'] <- 0
+  pf <- reduced_gene_lengths[gen_model$names$gene_list,]$max_cds
   message("Making matrix")
   X <- matrix(0, n_mut_types * n_genes + 1, n_mut_types * n_genes)
   colnames(X)
