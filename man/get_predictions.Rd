@@ -36,6 +36,6 @@ panel.
 A function taking a predictive model(s) and new observations, and applying the predictive model to them to return predicted biomarker values.
 }
 \examples{
-example_pred <- get_predictions(example_refit_range, new_data =
+example_predictions <- get_predictions(example_refit_range, new_data =
 example_tables$val)
 }

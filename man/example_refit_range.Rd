@@ -12,11 +12,21 @@ A list with six entries:
 and each entry corresponds to whether the gene is included in the panel.}
 \item{panel_lengths}{A vector giving total panel length.}
 }
+
+A list with two entries:
+\describe{
+\item{predictions}{A a matrix containing a row for each sample and a column for each panel.}
+\item{panel_lengths}{A vector giving total panel lengths.}
+}
 }
 \usage{
+example_refit_range
+
 example_refit_range
 }
 \description{
 An example output from use of the function pred_refit_range(), applied to example gene length data and generative model fit.
+
+An example output from use of the function get_predictions(), applied to the pre-loaded datasets example_refit_range and example_tables$val .
 }
 \keyword{datasets}

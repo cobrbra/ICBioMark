@@ -526,7 +526,7 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 #' @export
 #'
 #' @examples
-#' example_pred <- get_predictions(example_refit_range, new_data =
+#' example_predictions <- get_predictions(example_refit_range, new_data =
 #' example_tables$val)
 
 get_predictions <- function(pred_model, new_data,

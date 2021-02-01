@@ -101,7 +101,7 @@
 
 #' Refitted Predictive Models Fitted on Example Data
 #'
-#' An example output from use of the function pred_refit_range(), applied to example gene length data and generative model fit.
+#' @description An example output from use of the function pred_refit_range(), applied to example gene length data and generative model fit.
 #'
 #' @format A list with six entries:
 #' \describe{
@@ -112,3 +112,14 @@
 #' }
 "example_refit_range"
 
+#' Example Predictions
+#'
+#' @description An example output from use of the function get_predictions(), applied to the pre-loaded datasets example_refit_range and example_tables$val .
+#'
+#' @format A list with two entries:
+#' \describe{
+#'   \item{predictions}{A a matrix containing a row for each sample and a column for each panel.}
+#
+#'   \item{panel_lengths}{A vector giving total panel lengths.}
+#' }
+"example_predictions"
