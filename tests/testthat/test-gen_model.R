@@ -9,8 +9,4 @@ test_that("A simple call to fit_gen_model() has the right format and value of ou
   expect_equal(output, example_gen_model)
 })
 
-test_that("The output of vis_model_fit has not changed", {
-  output <- vis_model_fit(example_gen_model)
 
-  expect_equal_to_reference(output, file = "datatest_vis_plot")
-})

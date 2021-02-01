@@ -1,5 +1,5 @@
 Package: ICBioMark
-Title: Data-driven design of targeted gene panels for estimating immunotherapy biomarkers
+Title: Data-Driven Design of Targeted Gene Panels for Estimating Immunotherapy Biomarkers
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Jacob R.",
@@ -12,7 +12,7 @@ Authors@R:
            role = c("aut"),
            email = "Timothy.cannings@sms.ed.ac.uk",
            comment = c(ORCID = "0000-0002-2111-4168")))
-Description: This package implements the methodology proposed in 'Data-driven design of targeted gene panels for estimating immunotherapy biomarkers', (Bradley and Cannings, 2021, preprint). It allows the user to fit generative models of mutation from an annotated mutation dataset, and then further to produce tunable linear estimators of exome-wide biomarkers. It also contains functions to simulate mutation annotated formate (MAF) data, as well as to analyse the output and performance of models.
+Description: Implementation of the methodology proposed in 'Data-driven design of targeted gene panels for estimating immunotherapy biomarkers', (Bradley and Cannings, 2021, preprint). This package allows the user to fit generative models of mutation from an annotated mutation dataset, and then further to produce tunable linear estimators of exome-wide biomarkers. It also contains functions to simulate mutation annotated format (MAF) data, as well as to analyse the output and performance of models.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

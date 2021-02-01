@@ -7,8 +7,5 @@ test_that("Check that the output of generate_maf_data() has the right structure"
   expect_equal(names(output), c("maf", "gene_lengths"))
 })
 
-test_that("Check that the output of generate_maf_data() has not changed", {
-  output <- generate_maf_data()
-  expect_equal(output, example_maf_data)
-})
+
 
