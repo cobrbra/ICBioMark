@@ -75,7 +75,7 @@ gene_lengths (dataframe)
 }
 }
 \description{
-Randomly simulate an (abridged) annotated mutation file, containing information on sample of origin, gene and mutation type, as well as a dataframe of gene lengths.
+A function to randomly simulate an (abridged) annotated mutation file, containing information on sample of origin, gene and mutation type, as well as a dataframe of gene lengths.
 }
 \examples{
 # Generate some random data

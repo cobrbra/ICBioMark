@@ -32,7 +32,7 @@ How to select a representative biomarker value from the training dataset. Defaul
 A numerical value, to be used as a penalty weighting in the subsequent group lasso optimisation.
 }
 \description{
-Construct Bias Penalisation
+An internal function, producing the correct bias penalisation for use in predictive model fitting.
 }
 \examples{
 K <- get_K(example_gen_model, 1, example_tables$train$matrix)

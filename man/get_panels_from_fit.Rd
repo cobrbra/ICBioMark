@@ -29,7 +29,7 @@ to be included in that iteration.
 }
 }
 \description{
-Extract Panel Details from Group Lasso Fit
+An internal function for analysing a group Lasso fit as part of the predictive model learning procedure, which returns the sets of genes identified by different iterations of the group Lasso algorithm.
 }
 \examples{
 panels <- get_panels_from_fit(example_maf_data$gene_lengths, example_first_pred_tmb$fit,

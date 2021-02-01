@@ -72,7 +72,7 @@ A list with two entries:
 }
 }
 \description{
-Produce Error Bounds for Predictions
+A function to produce a confidence region for a linear predictor. In upcoming versions will (hopefully) be greatly simplified.
 }
 \examples{
 example_intervals <- pred_intervals(predictions = get_predictions(example_refit_range,

@@ -22,6 +22,6 @@ to be included in that iteration.}
 example_first_pred_tmb
 }
 \description{
-Produced using the function pred_first_fit().
+An example output from the function pred_first_fit(), applied to pre-loaded example mutation data.
 }
 \keyword{datasets}

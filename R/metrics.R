@@ -1,5 +1,7 @@
 #' R Squared Metrics for Predictions
 #'
+#' @description A function to return R^2 metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
+#'
 #' @param predictions (list)
 #' A list with two elements, 'predictions' and 'panel_lengths',
 #' as produced by the function get_predictions().
@@ -48,6 +50,8 @@ get_r_squared <- function(predictions, biomarker_values, model = "", threshold =
   }
 
 #' AUPRC Metrics for Predictions
+#'
+#' @description A function to return AUPRC metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
 #'
 #' @param predictions (list)
 #' A list with two elements, 'predictions' and 'panel_lengths',
@@ -100,6 +104,8 @@ get_auprc <- function(predictions, biomarker_values, model = "", threshold = 300
 }
 
 #' Metrics for Predictive Performance
+#'
+#' @description A function to return a variety metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
 #'
 #' @param predictions (list)
 #' A list with two elements, 'predictions' and 'panel_lengths',

@@ -2,7 +2,7 @@
 % Please edit documentation in R/maf_to_tables.R
 \name{get_biomarker_tables}
 \alias{get_biomarker_tables}
-\title{True Biomarker Values on Training, Validation and Test Sets}
+\title{Get True Biomarker Values on Training, Validation and Test Sets}
 \usage{
 get_biomarker_tables(
   maf,
@@ -45,7 +45,7 @@ Input value for the function set.seed().}
 A list of three objects: 'train', 'val' and 'test. Each comprises a dataframe with two columns, denoting sample ID and biomarker value.
 }
 \description{
-True Biomarker Values on Training, Validation and Test Sets
+A function, similar to get_mutation_tables(), but returning the true biomarker values for a training, validation and test sets.
 }
 \examples{
 print(head(get_biomarker_tables(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))))

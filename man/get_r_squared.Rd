@@ -32,7 +32,7 @@ A dataframe with 5 columns:
 }
 }
 \description{
-R Squared Metrics for Predictions
+A function to return R^2 metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
 }
 \examples{
 example_r <- get_r_squared(predictions = get_predictions(example_refit_panel, new_data =

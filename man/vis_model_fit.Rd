@@ -25,7 +25,7 @@ A generative model fitted by fit_gen_model()}
 Summary plot of the generative model fit across folds.
 }
 \description{
-Visualise Generative Model Fit
+A function to visualise how well a general model has fitted to a mutation dataset across cross-validation folds. Designed to produce a similar output to glmnet's function plot.cv.glmnet.
 }
 \examples{
 p <- vis_model_fit(example_gen_model)

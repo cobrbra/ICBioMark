@@ -62,7 +62,7 @@ for each first-fit panel.
 }
 }
 \description{
-Refit for each panel produced by a first-fit range.
+A function producing a refitted predictive model for each panel produced by usage of the function pred_first_fit(), by repeatedly applying the function pred_refit_panel().
 }
 \examples{
 example_refit_range <- pred_refit_range(pred_first = example_first_pred_tmb,

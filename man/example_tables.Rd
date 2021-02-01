@@ -24,6 +24,6 @@ Each of these three objects is a list with the following entries (for more detai
 example_tables
 }
 \description{
-Mutation data extracted from the stored example pieces of mutation data example_maf_data using get_tables.
+Mutation data extracted from the pre-loaded example mutation data example_maf_data, using the function get_mutation_tables().
 }
 \keyword{datasets}

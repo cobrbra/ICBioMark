@@ -15,6 +15,6 @@ A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with tw
 example_tmb_tables
 }
 \description{
-Produced using the function get_biomarker_tables(), and from the example MAF data attached in example_maf_data$maf.
+An example output produced by using the function get_biomarker_tables(), applied to the example MAF data pre-loaded in example_maf_data$maf.
 }
 \keyword{datasets}

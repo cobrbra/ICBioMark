@@ -1,5 +1,7 @@
 #' Fit Generative Model
 #'
+#' @description A function to fit a generative model to a mutation dataset. At its heart, requires a gene_lengths dataframe (for examples of the correct format for this see the pre-loaded datasets example_maf_data$gene_lengths and ensembl_gene_lengths), and a mutation dataset. This is best supplied through the 'table' argument, and constructed via the function get_mutation_tables().
+#'
 #' @param gene_lengths (dataframe)
 #' A table with two columns: Hugo_Symbol and max_cds, providing the lengths of the genes to be modelled.
 #' @param matrix (Matrix::sparseMatrix)
@@ -267,6 +269,8 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 
 
 #' Visualise Generative Model Fit
+#'
+#' @description A function to visualise how well a general model has fitted to a mutation dataset across cross-validation folds. Designed to produce a similar output to glmnet's function plot.cv.glmnet.
 #'
 #' @param gen_model (list)
 #' A generative model fitted by fit_gen_model()

@@ -49,9 +49,9 @@ and 'NS' is an element of the dictionary vector.
 }
 }
 \description{
-Given a mutation annotation dataset with columns for sample barcode, gene name and mutation type, we may wish to reformulate this as a mutation matrix,
+A function to, given a mutation annotation dataset with columns for sample barcode, gene name and mutation type, to reformulate this as a mutation matrix,
 with rows denoting samples, columns denoting gene/mutation type combinations, and the individual entries giving the number of mutations observed. This
-will likely be very sparse, so we save it as a sparse matrix for efficiency..
+will likely be very sparse, so we save it as a sparse matrix for efficiency.
 }
 \examples{
 # We use the preloaded maf file example_maf_data

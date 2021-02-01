@@ -19,6 +19,6 @@ A dataframe with three columns:
 ensembl_gene_lengths
 }
 \description{
-Gene Lengths from the Ensembl Database
+Pre-imported length data from the Ensembl database for all genes on chromosomes 1-22, X and Y.
 }
 \keyword{datasets}

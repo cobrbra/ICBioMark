@@ -62,7 +62,7 @@ to be included in that iteration.
 }
 }
 \description{
-This function implements the first-fit
+This function implements the first-fit procedure described in Bradley and Cannings, 2021. It requires at least a generative model and a dataframe containing gene lengths as input.
 }
 \examples{
 example_first_fit <- pred_first_fit(example_gen_model, lambda = exp(seq(-9, -14, length.out = 100)),

@@ -22,6 +22,6 @@ An annotated mutation dataframe with 6 columns and 299855 rows:
 nsclc_maf
 }
 \description{
-Non-Small Cell Lung Cancer MAF Data
+A pre-loaded mutation dataset from Campbell et. al (2016), downloaded from The Cancer Genome Atlas.
 }
 \keyword{datasets}

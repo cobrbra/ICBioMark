@@ -41,7 +41,7 @@ dataframe with 5 columns:
 }
 }
 \description{
-Metrics for Predictive Performance
+A function to return a variety metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
 }
 \examples{
 example_stat <- get_stats(predictions = get_predictions(example_refit_panel,

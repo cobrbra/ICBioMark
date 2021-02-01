@@ -33,7 +33,7 @@ A vector of characters, with values corresponding to the grouping labels for mut
 will be referred to in a mutation annotated file (MAF). See examples.
 }
 \description{
-Create a mutation dictionary to group and filter mutation types: this can be useful for computational practicality. It is often not practical to model
+A function to create a mutation dictionary to group and filter mutation types: this can be useful for computational practicality. It is often not practical to model
 each distinct mutation type together, so for practicality one may group multiple classes together (e.g. all indel mutations, all nonsynonymous mutations).
 Additionally, some mutation types may be excluded from modelling (for example, one may wish not to use synonymous mutations in the model fitting process).
 }

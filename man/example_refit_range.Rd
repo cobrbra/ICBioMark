@@ -17,6 +17,6 @@ and each entry corresponds to whether the gene is included in the panel.}
 example_refit_range
 }
 \description{
-Produced using the function pred_refit_range().
+An example output from use of the function pred_refit_range(), applied to example gene length data and generative model fit.
 }
 \keyword{datasets}

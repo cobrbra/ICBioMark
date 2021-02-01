@@ -66,7 +66,7 @@ A list comprising three objets:
 }
 }
 \description{
-Fit Generative Model
+A function to fit a generative model to a mutation dataset. At its heart, requires a gene_lengths dataframe (for examples of the correct format for this see the pre-loaded datasets example_maf_data$gene_lengths and ensembl_gene_lengths), and a mutation dataset. This is best supplied through the 'table' argument, and constructed via the function get_mutation_tables().
 }
 \examples{
 example_gen_model <- fit_gen_model(example_maf_data$gene_lengths, table = example_tables$train)

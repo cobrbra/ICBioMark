@@ -1,6 +1,6 @@
 #' Construct Optimisation Parameters.
 #'
-#' From the learned generative model and training data, produces a vector of weights p to be used in
+#' @description An internal function. From the learned generative model and training data, produces a vector of weights p to be used in
 #' the subsequent group lasso optimisation, alongside a biomarker-dependent normalisation quantity p_norm.
 #'
 #' @param gen_model (list)
@@ -18,7 +18,7 @@
 #'  * A vector p, with an entry corresponding to each combination of gene and mutation type specified
 #'   in the generative model fitted. Each component is a non-negative value corresponding to a weighting
 #'   p to be supplied to a group lasso optimisation.
-#'  * A numeric p_norm, giving the factor between p_{gs} and þ_{0gs} (see paper for details).
+#'  * A numeric p_norm, giving the factor between p_{gs} and phi_{0gs} (see paper for details).
 #'  * A vector biomarker_columns, detailing which of the elements of p correspond to gene/mutation type
 #'   combinations contributing to the biomarker in question.
 #'
@@ -73,6 +73,8 @@ get_p <- function(gen_model, training_matrix, marker_mut_types, gene_lengths) {
 
 #' Construct Bias Penalisation
 #'
+#' @description An internal function, producing the correct bias penalisation for use in predictive model fitting.
+#'
 #' @param gen_model (list)
 #' A generative mutation model, fitted by fit_gen_model().
 #' @param p_norm (numeric)
@@ -106,6 +108,8 @@ get_K <- function(gen_model, p_norm, training_matrix, marker_training_values = N
 }
 
 #' Extract Panel Details from Group Lasso Fit
+#'
+#' @description An internal function for analysing a group Lasso fit as part of the predictive model learning procedure, which returns the sets of genes identified by different iterations of the group Lasso algorithm.
 #'
 #' @param gene_lengths (dataframe)
 #' A table with two columns: Hugo_Symbol and max_cds, providing the lengths of the genes to be modelled.
@@ -152,7 +156,7 @@ get_panels_from_fit <- function(gene_lengths, fit, gene_list, mut_types_list) {
 
 #' First-Fit Predicitve Model with Group Lasso
 #'
-#' This function implements the first-fit
+#' @description This function implements the first-fit procedure described in Bradley and Cannings, 2021. It requires at least a generative model and a dataframe containing gene lengths as input.
 #'
 #' @param gen_model (list)
 #' A generative mutation model, fitted by fit_gen_model().
@@ -244,6 +248,8 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
 }
 
 #' Refitted Predictive Model for a Given Panel
+#'
+#' @description A function taking the output of a call to pred_first_fit(), as well as gene length information, and a specified panel (list of genes), and producing a refitted predictive model on that given panel.
 #'
 #' @param pred_first (list)
 #' A first-fit predictive model as produced by pred_first_fit().
@@ -410,7 +416,7 @@ pred_refit_panel <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 
 #' Get Refitted Predictive Models for a First-Fit Range of Panels
 #'
-#' Refit for each panel produced by a first-fit range.
+#' @description  A function producing a refitted predictive model for each panel produced by usage of the function pred_first_fit(), by repeatedly applying the function pred_refit_panel().
 #'
 #' @param pred_first (list)
 #' A first-fit predictive model as produced by pred_first_fit().
@@ -496,6 +502,8 @@ pred_refit_range <- function(pred_first = NULL, gene_lengths = NULL, model = "T"
 
 #' Produce Predictions on an Unseen Dataset
 #'
+#' @description A function taking a predictive model(s) and new observations, and applying the predictive model to them to return predicted biomarker values.
+#'
 #' @param pred_model (list)
 #' A predictive model as fitted by pred_first_fit(), pred_refit_panel() or
 #' pred_refit_range().
@@ -536,6 +544,8 @@ get_predictions <- function(pred_model, new_data,
 }
 
 #' Produce Error Bounds for Predictions
+#'
+#' @description A function to produce a confidence region for a linear predictor. In upcoming versions will (hopefully) be greatly simplified.
 #'
 #' @param predictions (list)
 #' A predictions object, as produced by get_predictions().

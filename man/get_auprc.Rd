@@ -32,7 +32,7 @@ A dataframe with 5 columns:
 }
 }
 \description{
-AUPRC Metrics for Predictions
+A function to return AUPRC metrics for predictions vs actual values. Works well when piped to straight from get_predictions().
 }
 \examples{
 example_auprc <- get_auprc(predictions = get_predictions(example_refit_panel,

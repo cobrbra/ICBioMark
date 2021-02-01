@@ -59,7 +59,7 @@ A list with three elements:
 }
 }
 \description{
-Refitted Predictive Model for a Given Panel
+A function taking the output of a call to pred_first_fit(), as well as gene length information, and a specified panel (list of genes), and producing a refitted predictive model on that given panel.
 }
 \examples{
 example_refit_panel <- pred_refit_panel(pred_first = example_first_pred_tmb,

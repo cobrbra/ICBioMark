@@ -1,5 +1,6 @@
 #' Gene Lengths from the Ensembl Database
 #'
+#' @description Pre-imported length data from the Ensembl database for all genes on chromosomes 1-22, X and Y.
 #'
 #' @format A dataframe with three columns:
 #' \describe{

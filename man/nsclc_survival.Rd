@@ -7,7 +7,7 @@
 \format{
 An annotated mutation dataframe with 23 columns and 1144 rows. Each row
 corresponds to a sample, and details clinical and survival information about the
-patient from whom the sample was derived. Important columns :
+patient from whom the sample was derived. Its columns are as follows:
 \describe{
 \item{CASE_ID}{}
 \item{AGE}{}
@@ -41,6 +41,6 @@ patient from whom the sample was derived. Important columns :
 nsclc_survival
 }
 \description{
-Non-Small Cell Lung Cancer Survival and Clinical Data
+A pre-loaded clinical dataset containing survival and clinical data from Campbell et. al (2016), downloaded from The Cancer Genome Atlas.
 }
 \keyword{datasets}

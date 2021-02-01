@@ -1,6 +1,6 @@
 #' Generate mutation data.
 #'
-#' Randomly simulate an (abridged) annotated mutation file, containing information on sample of origin, gene and mutation type, as well as a dataframe of gene lengths.
+#' @description A function to randomly simulate an (abridged) annotated mutation file, containing information on sample of origin, gene and mutation type, as well as a dataframe of gene lengths.
 #'
 #' @param n_samples (numeric)
 #' The number of samples to generate mutation data for - each will have a unique value in the 'Tumor_Sample_Barcode'

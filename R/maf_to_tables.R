@@ -1,6 +1,6 @@
 #' Group and Filter Mutation Types
 #'
-#' Create a mutation dictionary to group and filter mutation types: this can be useful for computational practicality. It is often not practical to model
+#' @description A function to create a mutation dictionary to group and filter mutation types: this can be useful for computational practicality. It is often not practical to model
 #' each distinct mutation type together, so for practicality one may group multiple classes together (e.g. all indel mutations, all nonsynonymous mutations).
 #' Additionally, some mutation types may be excluded from modelling (for example, one may wish not to use synonymous mutations in the model fitting process).
 #'
@@ -123,9 +123,9 @@ get_mutation_dictionary <- function(for_biomarker = "TIB", include_synonymous = 
 
 #' Produce a Mutation Matrix from a MAF
 #'
-#' Given a mutation annotation dataset with columns for sample barcode, gene name and mutation type, we may wish to reformulate this as a mutation matrix,
+#' @description A function to, given a mutation annotation dataset with columns for sample barcode, gene name and mutation type, to reformulate this as a mutation matrix,
 #' with rows denoting samples, columns denoting gene/mutation type combinations, and the individual entries giving the number of mutations observed. This
-#' will likely be very sparse, so we save it as a sparse matrix for efficiency..
+#' will likely be very sparse, so we save it as a sparse matrix for efficiency.
 #'
 #' @param maf (dataframe)
 #' A table of annotated mutations containing the columns 'Tumor_Sample_Barcode', 'Hugo_Symbol', and 'Variant_Classification'.
@@ -223,7 +223,7 @@ get_table_from_maf <- function(maf, sample_list = NULL, gene_list = NULL, accept
 
 #' Produce Training, Validation and Test Matrices
 #'
-#' This function allows for i) separation of a mutation dataset into training, validation and testing components, and ii) conversion from annotated mutation format
+#' @description This function allows for i) separation of a mutation dataset into training, validation and testing components, and ii) conversion from annotated mutation format
 #' to sparse mutation matrices, as described in the function get_table_from_maf().
 #'
 #' @param maf (dataframe)
@@ -282,6 +282,8 @@ get_mutation_tables <- function(maf, split = c(train = 0.7, val = 0.15, test = 0
   }
 
 #' Produce a Table of Biomarker Values from a MAF
+#'
+#' @description A function to recover true biomarker values from a mutation annotation file.
 #'
 #' @param maf (dataframe)
 #' A table of annotated mutations containing the columns 'Tumor_Sample_Barcode', 'Hugo_Symbol', and 'Variant_Classification'.
@@ -361,7 +363,9 @@ get_biomarker_from_maf <- function(maf, biomarker = "TIB", sample_list = NULL, g
   return(table)
 }
 
-#' True Biomarker Values on Training, Validation and Test Sets
+#' Get True Biomarker Values on Training, Validation and Test Sets
+#'
+#' A function, similar to get_mutation_tables(), but returning the true biomarker values for a training, validation and test sets.
 #'
 #' @param maf (dataframe)
 #' A table of annotated mutations containing the columns 'Tumor_Sample_Barcode', 'Hugo_Symbol', and 'Variant_Classification'.

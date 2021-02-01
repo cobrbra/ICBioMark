@@ -33,7 +33,7 @@ Name of biomarker. Only needed if biomarker is not "TMB" or "TIB"}
 A dataframe with two columns, 'Tumor_Sample_Barcode' and values of the biomarker specified.
 }
 \description{
-Produce a Table of Biomarker Values from a MAF
+A function to recover true biomarker values from a mutation annotation file.
 }
 \examples{
 print(head(get_biomarker_from_maf(example_maf_data$maf, sample_list = paste0("SAMPLE_", 1:100))))

@@ -26,13 +26,13 @@ A list with three entries:
 \item A vector p, with an entry corresponding to each combination of gene and mutation type specified
 in the generative model fitted. Each component is a non-negative value corresponding to a weighting
 p to be supplied to a group lasso optimisation.
-\item A numeric p_norm, giving the factor between p_{gs} and þ_{0gs} (see paper for details).
+\item A numeric p_norm, giving the factor between p_{gs} and phi_{0gs} (see paper for details).
 \item A vector biomarker_columns, detailing which of the elements of p correspond to gene/mutation type
 combinations contributing to the biomarker in question.
 }
 }
 \description{
-From the learned generative model and training data, produces a vector of weights p to be used in
+An internal function. From the learned generative model and training data, produces a vector of weights p to be used in
 the subsequent group lasso optimisation, alongside a biomarker-dependent normalisation quantity p_norm.
 }
 \examples{

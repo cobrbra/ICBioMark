@@ -16,6 +16,6 @@ A list with two entries:
 example_gen_model
 }
 \description{
-Model fitted using fit_gen_model() on example simulated data.
+An example of the output produced by fit_gen_model() on simulated data.
 }
 \keyword{datasets}
