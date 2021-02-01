@@ -74,3 +74,22 @@ A list with two entries:
 \description{
 Produce Error Bounds for Predictions
 }
+\examples{
+example_intervals <- pred_intervals(predictions = get_predictions(example_refit_range,
+               new_data = example_tables$val),
+               pred_model = example_refit_range, biomarker_values = example_tmb_tables$val,
+               gen_model = example_gen_model, training_matrix = example_tables$train$matrix,
+               max_panel_length = 15000, gene_lengths = example_maf_data$gene_lengths)
+
+example_confidence_plot <- ggplot2::ggplot() +
+  ggplot2::geom_point(data = example_intervals$prediction_intervals,
+             ggplot2::aes(x = true_value, y = estimated_value)) +
+        ggplot2::geom_ribbon(data = example_intervals$confidence_region,
+          ggplot2::aes(x = x, ymin = y_lower, ymax = y_upper),
+                    fill = "red", alpha = 0.2) +
+        ggplot2::geom_line(data = example_intervals$confidence_region,
+          ggplot2::aes(x = x, y = y), linetype = 2) +
+        ggplot2::scale_x_log10() + ggplot2::scale_y_log10()
+
+plot(example_confidence_plot)
+}

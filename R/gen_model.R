@@ -187,6 +187,85 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 
 }
 
+# fit_gen_model_unisamp <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_list = NULL, mut_types_list = NULL, col_names = NULL,
+#                                   table = NULL, nlambda = 100, n_folds = 10, maxit = 1e9, seed_id = 1234, progress = FALSE) {
+#
+# }
+#
+# fit_gen_model_uninteract <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_list = NULL, mut_types_list = NULL, col_names = NULL,
+#                                      table = NULL, nlambda = 100, n_folds = 10, maxit = 1e9, seed_id = 1234, progress = FALSE) {
+#
+# }
+#
+# get_gen_estimates <- function(training_data, gen_model, alt_gen_model = NULL, alt_model_type = "S", gene_lengths = NULL, calculate_deviance = FALSE) {
+#
+#   n_samples <- length(training_data$sample_list)
+#   n_genes <- length(training_data$gene_list)
+#   n_mut_types <- length(training_data$mut_types_list)
+#
+#   mutation_vector <- training_data$matrix
+#   dim(mutation_vector) <- c(n_samples * n_genes * n_mut_types, 1)
+#   mutation_vector <- as.vector(mutation_vector)
+#
+#   t_i_getter <- Matrix::sparseMatrix(i = rep(1:n_samples, n_genes*n_mut_types), j = 1:(n_samples*n_genes*n_mut_types), dims = c(n_samples, n_samples*n_genes*n_mut_types))
+#   t_i <- as.vector(t_i_getter %*% mutation_vector)
+#   t_i_getter <- NULL
+#
+#   t_s_getter <- Matrix::sparseMatrix(i = rep(1:n_mut_types, times = n_genes, each = n_samples), j = 1:(n_samples*n_genes*n_mut_types), dims = c(n_mut_types, n_samples*n_genes*n_mut_types))
+#   t_s <- as.vector(t_s_getter %*% mutation_vector)
+#   t_s_getter <- NULL
+#
+#   # We use weights (rather than offsets) to fit the model, as it makes glmnet more efficient.
+#   weights <- rep(t_s, each = n_samples, times = n_genes)* rep(t_i, times = n_mut_types*n_genes)
+#   weights <- weights*rep(gene_lengths[training_data$gene_list,]$max_cds, each = n_samples*n_mut_types)
+#   weights <- weights/mean(weights)
+#
+#   i <- 1:(n_samples*n_genes*n_mut_types)
+#   j <- rep(1:(n_genes*n_mut_types), each = n_samples)
+#   j_ <- rep(seq(1, n_genes*n_mut_types, n_mut_types), each = n_samples*n_mut_types)
+#
+#   design_matrix <- Matrix::sparseMatrix(c(i, i), c(j, j_))
+#
+#   est_mut_vec <- exp(gen_model$fit$a0[gen_model$s_min] + design_matrix %*% gen_model$fit$beta[, gen_model$s_min])
+#   est_mut_vec <- as.vector(est_mut_vec * weights)
+#
+#   rm(i); rm(j); rm(j_); rm(weights)
+#
+#  if (alt_model_type == "US") {
+#
+#   }
+#
+#   else if (alt_model_type == "UG") {
+#     alt_est_mut_vec <- rep(gene_lengths[training_data$gene_list,]$max_cds, each = n_samples*n_mut_types)
+#     alt_est_mut_vec <- alt_est_mut_vec * rep(t_s, each = n_samples, times = n_genes)
+#     alt_est_mut_vec <- alt_est_mut_vec / mean(alt_est_mut_vec)
+#     alt_est_mut_vec <- alt_est_mut_vec * rep(rep(t_i, times = n_mut_types*n_genes))
+#   }
+#
+#   else if (alt_model_type == "UI") {
+#
+#   }
+#
+#   else {
+#     stop(paste(alt_model_type, "not a valid alternative model type."))
+#   }
+#
+#   if (calculate_deviance) {
+#     if (alt_model_type == "S") {
+#       deviance <- sum(mutation_vector*ifelse(mutation_vector == 0, 0, log(mutation_vector/est_mut_vec)) - (mutation_vector - est_mut_vec))
+#       df <- n_samples * n_genes * n_mut_types - n_samples + n_genes * n_mut_types + n_mut_types
+#     }
+#     else {
+#       alt_deviance <- sum(mutation_vector*ifelse(mutation_vector == 0, 0, log(mutation_vector/alt_est_mut_vec)) - (mutation_vector - alt_est_mut_vec))
+#     }
+#     return(list(deviance = alt_deviance - deviance, df = df))
+#   }
+#   else {
+#     return(est_mut_vec)
+#   }
+# }
+
+
 #' Visualise Generative Model Fit
 #'
 #' @param gen_model (list)
@@ -205,6 +284,7 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 #'
 #' @examples
 #' p <- vis_model_fit(example_gen_model)
+#'
 
 vis_model_fit <- function(gen_model, x_sparsity = FALSE, y_sparsity = FALSE, mut_type = NULL) {
   fit_data <- data.frame(log_lambda = log(gen_model$fit$lambda),

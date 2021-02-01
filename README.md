@@ -7,13 +7,9 @@
 <!-- badges: end -->
 
 Welcome to ICBioMark, based on the paper “Data-driven design of targeted
-gene panels forestimating immunotherapy biomarkers”, *Bradley and
-Cannings* (currently being written
+gene panels for estimating immunotherapy biomarkers”, *Bradley and
+Cannings* (see our preprint
 [here](https://github.com/cobrbra/TargetedPanelEstimation_Paper)).
-ICBioMark is designed to implement regularised optimisation methods for
-the design and use of targeted gene panels in predicting
-immunotherapeutic biomarkers such as Tumour Mutation Burden (TMB) and
-Tumour Indel Burden (TIB).
 
 ## Installation
 
@@ -242,6 +238,5 @@ including `get_stats()` to analyse the output compared to true values.
 
 ## Getting Help
 
-Please do feel free to flag issues and requests on this repository. In
-dire need, you can try reaching me by [email](cobrbradley@gmail.com),
-but I make no guarantees on speedy response via this route.
+Please do feel free to flag issues and requests on this repository. You
+can also [email](mailto:cobrbradley@gmail.com) me.

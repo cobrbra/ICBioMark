@@ -41,10 +41,8 @@ get_r_squared <- function(predictions, biomarker_values, model = "", threshold =
 
   r.squared <- purrr::map(1:n_panels, ~ 1 - sum((predictions$predictions[, .] - biomarker_values[[biomarker]])^2) /
                 sum((biomarker_values[[biomarker]] - mean(biomarker_values[[biomarker]]))^2))
-
   output <- data.frame(panel_length = predictions$panel_lengths,
                        model = model, biomarker = biomarker, stat = unlist(r.squared), metric = "R")
-
   return(output)
 
   }

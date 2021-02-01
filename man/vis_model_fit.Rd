@@ -29,4 +29,5 @@ Visualise Generative Model Fit
 }
 \examples{
 p <- vis_model_fit(example_gen_model)
+
 }

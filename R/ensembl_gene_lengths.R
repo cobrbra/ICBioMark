@@ -1,7 +1,6 @@
 #' Gene Lengths from the Ensembl Database
 #'
 #'
-#'
 #' @format A dataframe with three columns:
 #' \describe{
 #'   \item{Hugo_Symbol}{The names of all nuclear genes in humans for which ensembl entries with coding sequence lengths exist.}

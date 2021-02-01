@@ -581,13 +581,15 @@ get_predictions <- function(pred_model, new_data,
 #'                gen_model = example_gen_model, training_matrix = example_tables$train$matrix,
 #'                max_panel_length = 15000, gene_lengths = example_maf_data$gene_lengths)
 #'
-#' example_confidence_plot <- ggplot() +
-#'   geom_point(data = example_intervals$prediction_intervals,
-#'              aes(x = true_value, y = estimated_value)) +
-#'         geom_ribbon(data = .$confidence_region, aes(x = x, ymin = y_lower, ymax = y_upper),
+#' example_confidence_plot <- ggplot2::ggplot() +
+#'   ggplot2::geom_point(data = example_intervals$prediction_intervals,
+#'              ggplot2::aes(x = true_value, y = estimated_value)) +
+#'         ggplot2::geom_ribbon(data = example_intervals$confidence_region,
+#'           ggplot2::aes(x = x, ymin = y_lower, ymax = y_upper),
 #'                     fill = "red", alpha = 0.2) +
-#'         geom_line(data = .$confidence_region, aes(x = x, y = y), linetype = 2) +
-#'         scale_x_log10() + scale_y_log10()}
+#'         ggplot2::geom_line(data = example_intervals$confidence_region,
+#'           ggplot2::aes(x = x, y = y), linetype = 2) +
+#'         ggplot2::scale_x_log10() + ggplot2::scale_y_log10()
 #'
 #' plot(example_confidence_plot)
 
