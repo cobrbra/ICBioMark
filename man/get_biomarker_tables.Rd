@@ -33,7 +33,7 @@ Vector of characters giving a list of genes to include in calculation of biomark
 Name of biomarker. Only needed if biomarker is not "TMB" or "TIB"}
 
 \item{tables}{(list)
-Optional paramater, the output of a call to get_mutation_tables(), which already has a train/val/test split.}
+Optional parameter, the output of a call to get_mutation_tables(), which already has a train/val/test split.}
 
 \item{split}{(numeric)
 Optional parameter directly specifying the proportions of a train/test/val split.}

@@ -29,7 +29,7 @@ get_gen_estimates(
 \value{
 If calculate_deviance = FALSE:
 
-A list with two entries, est_mut_vec and alt_est_mut_vec, each of legnth n_samples x n_genes x n_mut_types, giving expected mutation value for each combination of sample, gene and variant type in the training dataset under the two models being compared.
+A list with two entries, est_mut_vec and alt_est_mut_vec, each of length n_samples x n_genes x n_mut_types, giving expected mutation value for each combination of sample, gene and variant type in the training dataset under the two models being compared.
 
 If calculate_deviance = TRUE:
 

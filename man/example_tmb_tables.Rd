@@ -5,7 +5,7 @@
 \alias{example_tmb_tables}
 \title{Tumour Mutation Burden of Example Train, Validation and Test Data.}
 \format{
-A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+A list with threeobjects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
 \describe{
 \item{Tumor_Sample_Barcode}{A unique ID for each sample.}
 \item{TMB}{The value of Tumour Mutation Burden for that sample.}

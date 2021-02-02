@@ -97,7 +97,7 @@ missing gene length data.
 
 ### Train/Val/Test and Matrix Construction
 
-The MAF format is widely used and standardised, but not espeically
+The MAF format is widely used and standardised, but not especially
 helpful for our purposes. The ideal format for our data is a matrix,
 where every row corresponds to a sample, every column corresponds to a
 gene/mutation type combination, and each entry corresponds to how many

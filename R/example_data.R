@@ -28,7 +28,7 @@
 #' \describe{
 #'   \item{matrix}{A sparse matrix of mutations.}
 #'   \item{sample_list}{A character vector of sample IDs, corresponding to the rows of the mutation matrix.}
-#'   \item{gene_list}{A characer vector of gene names.}
+#'   \item{gene_list}{A character vector of gene names.}
 #'   \item{mut_types_list}{A character vector of mutation types.}
 #'   \item{colnames}{A character vector of gene name/mutation type combinations (in each case separated by the character "_"), corresponding to the columns of the mutation matrix.}
 #' }
@@ -50,7 +50,7 @@
 #'
 #' @description An example output produced by using the function get_biomarker_tables(), applied to the example MAF data pre-loaded in example_maf_data$maf.
 #'
-#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' @format A list with threeobjects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
 #' \describe{
 #'   \item{Tumor_Sample_Barcode}{A unique ID for each sample.}
 #'   \item{TMB}{The value of Tumour Mutation Burden for that sample.}
@@ -61,7 +61,7 @@
 #'
 #' @description An example output produced by using the function get_biomarker_tables(), applied to the example MAF data pre-loaded in example_maf_data$maf.
 #'
-#' @format A list with thre objects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
+#' @format A list with threeobjects: 'train', 'val' and 'test'. Each is a dataframe with two columns:
 #' \describe{
 #'   \item{Tumor_Sample_Barcode}{A unique ID for each sample.}
 #'   \item{TIB}{The value of Tumour Indel Burden for that sample.}

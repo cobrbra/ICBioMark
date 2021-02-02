@@ -30,7 +30,7 @@
 #' Used to call an alternative generative model type such as "US" (no sample-dependent parameters) or
 #' "UI" (no gene/variant-type interactions).
 #'
-#' @return A list comprising three objets:
+#' @return A list comprising three objects:
 #' * An object 'fit', a fitted glmnet model.
 #' * A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.
 #' * An integer 's_min', the index of the regularsisation penalty minimising cross-validation deviance.
@@ -237,7 +237,7 @@ fit_gen_model <- function(gene_lengths, matrix = NULL, sample_list = NULL, gene_
 #' @param progress (logical)
 #' Show progress bars and text.
 #'
-#' @return A list comprising three objets:
+#' @return A list comprising three objects:
 #' * An object 'fit', a fitted glmnet model.
 #' * A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.
 #' * An integer 's_min', the index of the regularsisation penalty minimising cross-validation deviance.
@@ -430,7 +430,7 @@ fit_gen_model_unisamp <- function(gene_lengths, matrix = NULL, sample_list = NUL
 #' @param progress (logical)
 #' Show progress bars and text.
 #'
-#' @return A list comprising three objets:
+#' @return A list comprising three objects:
 #' * An object 'fit', a fitted glmnet model.
 #' * A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.
 #' * An integer 's_min', the index of the regularsisation penalty minimising cross-validation deviance.
@@ -604,7 +604,7 @@ fit_gen_model_uninteract <- function(gene_lengths, matrix = NULL, sample_list = 
 #'
 #' @return If calculate_deviance = FALSE:
 #'
-#' A list with two entries, est_mut_vec and alt_est_mut_vec, each of legnth n_samples x n_genes x n_mut_types, giving expected mutation value for each combination of sample, gene and variant type in the training dataset under the two models being compared.
+#' A list with two entries, est_mut_vec and alt_est_mut_vec, each of length n_samples x n_genes x n_mut_types, giving expected mutation value for each combination of sample, gene and variant type in the training dataset under the two models being compared.
 #'
 #' If calculate_deviance = TRUE:
 #'

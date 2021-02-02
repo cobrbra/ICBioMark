@@ -379,7 +379,7 @@ get_biomarker_from_maf <- function(maf, biomarker = "TIB", sample_list = NULL, g
 #' @param biomarker_name (character)
 #' Name of biomarker. Only needed if biomarker is not "TMB" or "TIB"
 #' @param tables (list)
-#' Optional paramater, the output of a call to get_mutation_tables(), which already has a train/val/test split.
+#' Optional parameter, the output of a call to get_mutation_tables(), which already has a train/val/test split.
 #' @param split (numeric)
 #' Optional parameter directly specifying the proportions of a train/test/val split.
 #' @param seed_id (numeric)

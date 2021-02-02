@@ -57,7 +57,7 @@ Input value for the function set.seed().}
 Show progress bars and text.}
 }
 \value{
-A list comprising three objets:
+A list comprising three objects:
 \itemize{
 \item An object 'fit', a fitted glmnet model.
 \item A table 'dev', giving average deviances for each regularisation penalty factor and cross-validation fold.

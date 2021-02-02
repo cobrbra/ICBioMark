@@ -164,7 +164,7 @@ get_panels_from_fit <- function(gene_lengths, fit, gene_list, mut_types_list) {
 #' A vector of penalisation weights for input to the group lasso optimiser gglasso.
 #' @param biomarker (character)
 #' The biomarker in question. If "TMB" or "TIB", then automatically defines the subsequent
-#' varaible marker_mut_types.
+#' variable marker_mut_types.
 #' @param marker_mut_types (character)
 #' The set of mutation type groupings constituting the biomarker being estimated. Should be
 #' a vector comprising of elements of the mut_types_list vector in the 'names' attribute of

@@ -25,7 +25,7 @@ A vector of penalisation weights for input to the group lasso optimiser gglasso.
 
 \item{biomarker}{(character)
 The biomarker in question. If "TMB" or "TIB", then automatically defines the subsequent
-varaible marker_mut_types.}
+variable marker_mut_types.}
 
 \item{marker_mut_types}{(character)
 The set of mutation type groupings constituting the biomarker being estimated. Should be

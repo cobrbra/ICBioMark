@@ -15,7 +15,7 @@ Each of these three objects is a list with the following entries (for more detai
 \describe{
 \item{matrix}{A sparse matrix of mutations.}
 \item{sample_list}{A character vector of sample IDs, corresponding to the rows of the mutation matrix.}
-\item{gene_list}{A characer vector of gene names.}
+\item{gene_list}{A character vector of gene names.}
 \item{mut_types_list}{A character vector of mutation types.}
 \item{colnames}{A character vector of gene name/mutation type combinations (in each case separated by the character "_"), corresponding to the columns of the mutation matrix.}
 }
