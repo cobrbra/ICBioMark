@@ -16,7 +16,8 @@ fit_gen_model(
   n_folds = 10,
   maxit = 1e+09,
   seed_id = 1234,
-  progress = FALSE
+  progress = FALSE,
+  alt_model_type = NULL
 )
 }
 \arguments{
@@ -55,6 +56,10 @@ Input value for the function set.seed().}
 
 \item{progress}{(logical)
 Show progress bars and text.}
+
+\item{alt_model_type}{(character)
+Used to call an alternative generative model type such as "US" (no sample-dependent parameters) or
+"UI" (no gene/variant-type interactions).}
 }
 \value{
 A list comprising three objets:
