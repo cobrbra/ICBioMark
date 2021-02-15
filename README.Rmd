@@ -19,8 +19,9 @@ library(ggplot2)
 
 # ICBioMark
 
-<!-- badges: start -->
-<!-- badges: end -->
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/cobrbra/ICBioMark/workflows/R-CMD-check/badge.svg)](https://github.com/cobrbra/ICBioMark/actions)
+  <!-- badges: end -->
 
 Welcome to ICBioMark, based on the paper "Data-driven design of targeted gene panels for estimating immunotherapy biomarkers", *Bradley and Cannings* (see our preprint [here](https://github.com/cobrbra/TargetedPanelEstimation_Paper)). 
 

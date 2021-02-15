@@ -4,6 +4,7 @@
 # ICBioMark
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/cobrbra/ICBioMark/workflows/R-CMD-check/badge.svg)](https://github.com/cobrbra/ICBioMark/actions)
 <!-- badges: end -->
 
 Welcome to ICBioMark, based on the paper “Data-driven design of targeted
