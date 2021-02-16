@@ -9,8 +9,7 @@
 
 Welcome to ICBioMark, based on the paper “Data-driven design of targeted
 gene panels for estimating immunotherapy biomarkers”, *Bradley and
-Cannings* (see our preprint
-[here](https://github.com/cobrbra/TargetedPanelEstimation_Paper)).
+Cannings* (see our [preprint](https://arxiv.org/abs/2102.04296)).
 
 ## Installation
 
@@ -18,8 +17,7 @@ Cannings* (see our preprint
 
 You can install the development version of this package from this github
 repository (using the
-[devtools](https://cran.r-project.org/web/packages/devtools/index.html)
-package) with:
+[devtools](https://CRAN.R-project.org/package=devtools) package) with:
 
 ``` r
 devtools::install_github("cobrbra/ICBioMark")
