@@ -1,3 +1,8 @@
+# ICBioMark 0.1.3
+
+## Bug fixes
+* Error in pred_refit_panel when dealing with a single mutation type.
+
 # ICBioMark 0.1.2
 
 ## Bug fixes
