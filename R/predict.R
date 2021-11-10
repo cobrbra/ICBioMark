@@ -234,7 +234,7 @@ pred_first_fit <- function(gen_model, lambda = exp(seq(-16,-24, length.out = 100
   X[1,] <- sqrt(K)*p$p
   diag(X[2:(n_mut_types * n_genes + 1),]) <- sqrt(p$p)
   Y <- c(sqrt(K), sqrt(p$p))
-  Y[setdiff(2:(n_mut_types * n_genes + 1), 1 + p$bs)] <- 0
+  Y[setdiff(2:(n_mut_types * n_genes + 1), 1 + p$bc)] <- 0
 
   message("Fitting")
   fit <- gglasso::gglasso(x = X, y = Y, loss = "ls", lambda = lambda,
