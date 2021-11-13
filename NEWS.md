@@ -1,3 +1,8 @@
+# ICBioMark 0.1.4
+
+## Bug fixes
+* Typo in pred_refit_first().
+
 # ICBioMark 0.1.3
 
 ## Bug fixes
