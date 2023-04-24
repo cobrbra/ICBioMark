@@ -9,7 +9,7 @@
 
 Welcome to ICBioMark, based on the paper “Data-driven design of targeted
 gene panels for estimating immunotherapy biomarkers”, *Bradley and
-Cannings* (see our [preprint](https://arxiv.org/abs/2102.04296)).
+Cannings* (see our [preprint](https://arxiv.org/abs/2102.04296) and our paper in [Nature Communications Biology](https://www.nature.com/articles/s42003-022-03098-1)).
 
 ## Installation
 
@@ -27,6 +27,13 @@ from this github repository (using the
 ``` r
 devtools::install_github("cobrbra/ICBioMark")
 ```
+
+### Common installations problems
+`ICBioMark` requiers Mac OS users to have developer command tools installed. If you see an installation error containing words like "xcrun: error: invalid active developer path", you'll need to try
+``` {r, eval = FALSE}
+$xcode-select --install
+```
+from the terminal.
 
 ## Examples
 
