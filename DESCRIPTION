@@ -1,6 +1,6 @@
 Package: ICBioMark
 Title: Data-Driven Design of Targeted Gene Panels for Estimating Immunotherapy Biomarkers
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: 
     c(person(given = "Jacob R.",
            family = "Bradley",
@@ -27,6 +27,7 @@ Imports:
     Matrix,
     dplyr,
     purrr,
+    stringr (>= 1.4.0),
     latex2exp,
     matrixStats,
     ggplot2,
