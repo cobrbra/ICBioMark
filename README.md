@@ -28,10 +28,10 @@ from this github repository (using the
 devtools::install_github("cobrbra/ICBioMark")
 ```
 
-### Common installations problems
+### Common installation problems
 `ICBioMark` requiers Mac OS users to have developer command tools installed. If you see an installation error containing words like "xcrun: error: invalid active developer path", you'll need to try
 ``` {r, eval = FALSE}
-$xcode-select --install
+$ xcode-select --install
 ```
 from the terminal.
 
