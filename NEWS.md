@@ -2,6 +2,7 @@
 
 ## Bug fixes
 * Stricter installation requirements for stringr >= 1.4.0 to avoid failure when installing latex2exp dependency.
+* Updated CI tools for tracking package checks.
 
 # ICBioMark 0.1.4
 
